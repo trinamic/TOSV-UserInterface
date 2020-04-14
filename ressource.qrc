@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/">
+        <file>resources/lock_closed.svg</file>
+        <file>resources/lock_open.svg</file>
+        <file>resources/Arzt.svg</file>
+        <file>resources/Lunge.svg</file>
+        <file>resources/settings.svg</file>
+    </qresource>
+</RCC>
