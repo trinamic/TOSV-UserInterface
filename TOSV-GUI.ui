@@ -31,8 +31,8 @@
    <string notr="true">background-color:rgb(20, 145, 204)</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="1" column="0">
-    <widget class="QTabWidget" name="tabWidget">
+   <item row="0" column="0">
+    <widget class="TabWidget" name="tabWidget">
      <property name="enabled">
       <bool>true</bool>
      </property>
@@ -45,11 +45,14 @@
      <property name="font">
       <font>
        <family>Open Sans</family>
-       <pointsize>16</pointsize>
+       <pointsize>1</pointsize>
       </font>
      </property>
      <property name="tabletTracking">
       <bool>false</bool>
+     </property>
+     <property name="layoutDirection">
+      <enum>Qt::LeftToRight</enum>
      </property>
      <property name="styleSheet">
       <string notr="true">QTabWidget::pane { /* The tab widget frame */
@@ -62,8 +65,9 @@ QTabWidget QTabBar::tab {
 border: 1px solid rgb(0, 0, 0);
 border-top-left-radius: 4px;
 border-top-right-radius: 4px;
-min-width: 8ex;
 padding: 2px;
+padding-top: 0px;
+padding-bottom: -14px
 }
 QTabBar::tab:selected {
 border-color: rgb(0, 0, 0);
@@ -102,6 +106,11 @@ background: rgb(0, 105, 180);
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
+      <property name="font">
+       <font>
+        <pointsize>1</pointsize>
+       </font>
+      </property>
       <property name="styleSheet">
        <string notr="true">border-radius: 3px;
 Background-color: #1491CC;
@@ -115,139 +124,17 @@ border: 1px solid black;}
       </property>
       <attribute name="icon">
        <iconset>
-        <normaloff>resources/Lunge.svg</normaloff>
-        <normalon>:/resources/Lunge.svg</normalon>resources/Lunge.svg</iconset>
+        <normaloff>resources/Overview.svg</normaloff>resources/Overview.svg</iconset>
       </attribute>
       <attribute name="title">
        <string/>
       </attribute>
-      <widget class="QLabel" name="FlowLabel">
-       <property name="geometry">
-        <rect>
-         <x>90</x>
-         <y>330</y>
-         <width>71</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <family>Open Sans</family>
-        </font>
-       </property>
-       <property name="text">
-        <string>---</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-       <property name="openExternalLinks">
-        <bool>false</bool>
-       </property>
-       <property name="textInteractionFlags">
-        <set>Qt::LinksAccessibleByMouse|Qt::TextEditable</set>
-       </property>
-      </widget>
-      <widget class="QLabel" name="O2Label">
-       <property name="geometry">
-        <rect>
-         <x>90</x>
-         <y>350</y>
-         <width>71</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <family>Open Sans</family>
-        </font>
-       </property>
-       <property name="text">
-        <string>---</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-       <property name="textInteractionFlags">
-        <set>Qt::LinksAccessibleByMouse|Qt::TextEditable</set>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="StartButton">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>170</x>
-         <y>380</y>
-         <width>331</width>
-         <height>61</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <family>Open Sans</family>
-         <pointsize>36</pointsize>
-        </font>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">Background-color: rgb(255, 255, 255)</string>
-       </property>
-       <property name="text">
-        <string>NO MODULE</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="StopButton">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
+      <widget class="PlotWidget" name="VolumeGraph" native="true">
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>380</y>
-         <width>151</width>
-         <height>61</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <family>Open Sans</family>
-         <pointsize>24</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>STOP</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="CancelButton">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>510</x>
-         <y>380</y>
-         <width>161</width>
-         <height>61</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <family>Open Sans</family>
-         <pointsize>24</pointsize>
-         <strikeout>false</strikeout>
-        </font>
-       </property>
-       <property name="text">
-        <string>CANCEL</string>
-       </property>
-      </widget>
-      <widget class="PlotWidget" name="Graph1" native="true">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>30</y>
-         <width>661</width>
+         <y>10</y>
+         <width>591</width>
          <height>141</height>
         </rect>
        </property>
@@ -257,12 +144,12 @@ border: 1px solid black;}
         </font>
        </property>
       </widget>
-      <widget class="PlotWidget" name="Graph2" native="true">
+      <widget class="PlotWidget" name="FlowGraph" native="true">
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>180</y>
-         <width>661</width>
+         <y>160</y>
+         <width>591</width>
          <height>141</height>
         </rect>
        </property>
@@ -273,479 +160,475 @@ border: 1px solid black;}
         </font>
        </property>
       </widget>
-      <widget class="QLabel" name="PinspLabel">
-       <property name="geometry">
-        <rect>
-         <x>260</x>
-         <y>330</y>
-         <width>71</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <family>Open Sans</family>
-        </font>
-       </property>
-       <property name="text">
-        <string>---</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-       <property name="openExternalLinks">
-        <bool>false</bool>
-       </property>
-       <property name="textInteractionFlags">
-        <set>Qt::LinksAccessibleByMouse|Qt::TextEditable</set>
-       </property>
-      </widget>
-      <widget class="QLabel" name="PLimLabel">
-       <property name="geometry">
-        <rect>
-         <x>260</x>
-         <y>350</y>
-         <width>71</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <family>Open Sans</family>
-        </font>
-       </property>
-       <property name="text">
-        <string>---</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-       <property name="textInteractionFlags">
-        <set>Qt::LinksAccessibleByMouse|Qt::TextEditable</set>
-       </property>
-      </widget>
-      <widget class="QLabel" name="TInspLabel">
-       <property name="geometry">
-        <rect>
-         <x>430</x>
-         <y>330</y>
-         <width>71</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <family>Open Sans</family>
-        </font>
-       </property>
-       <property name="text">
-        <string>---</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-       <property name="openExternalLinks">
-        <bool>false</bool>
-       </property>
-       <property name="textInteractionFlags">
-        <set>Qt::LinksAccessibleByMouse|Qt::TextEditable</set>
-       </property>
-      </widget>
-      <widget class="QLabel" name="PeepLabel">
-       <property name="geometry">
-        <rect>
-         <x>430</x>
-         <y>350</y>
-         <width>71</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <family>Open Sans</family>
-        </font>
-       </property>
-       <property name="text">
-        <string>---</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-       <property name="textInteractionFlags">
-        <set>Qt::LinksAccessibleByMouse|Qt::TextEditable</set>
-       </property>
-      </widget>
-      <widget class="QLabel" name="RampLabel">
-       <property name="geometry">
-        <rect>
-         <x>600</x>
-         <y>330</y>
-         <width>71</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <family>Open Sans</family>
-        </font>
-       </property>
-       <property name="styleSheet">
-        <string notr="true"/>
-       </property>
-       <property name="text">
-        <string>---</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-       <property name="openExternalLinks">
-        <bool>false</bool>
-       </property>
-       <property name="textInteractionFlags">
-        <set>Qt::LinksAccessibleByMouse|Qt::TextEditable</set>
-       </property>
-      </widget>
-      <widget class="QLabel" name="fLabel">
-       <property name="geometry">
-        <rect>
-         <x>600</x>
-         <y>350</y>
-         <width>71</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <family>Open Sans</family>
-        </font>
-       </property>
-       <property name="text">
-        <string>---</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-       <property name="textInteractionFlags">
-        <set>Qt::LinksAccessibleByMouse|Qt::TextEditable</set>
-       </property>
-      </widget>
-      <widget class="QTextBrowser" name="TInspText">
-       <property name="geometry">
-        <rect>
-         <x>350</x>
-         <y>330</y>
-         <width>81</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <family>Open Sans</family>
-         <pointsize>12</pointsize>
-        </font>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">Background-color: rgb(0, 105, 180)</string>
-       </property>
-       <property name="verticalScrollBarPolicy">
-        <enum>Qt::ScrollBarAlwaysOff</enum>
-       </property>
-       <property name="horizontalScrollBarPolicy">
-        <enum>Qt::ScrollBarAlwaysOff</enum>
-       </property>
-       <property name="undoRedoEnabled">
-        <bool>false</bool>
-       </property>
-       <property name="html">
-        <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Open Sans'; font-size:12pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;right&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2';&quot;&gt;T&lt;/span&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; vertical-align:sub;&quot;&gt;INSP&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-       <property name="overwriteMode">
-        <bool>false</bool>
-       </property>
-      </widget>
-      <widget class="QTextBrowser" name="FlowText">
+      <widget class="PlotWidget" name="PressureGraph" native="true">
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>330</y>
-         <width>81</width>
-         <height>21</height>
+         <y>310</y>
+         <width>591</width>
+         <height>141</height>
         </rect>
        </property>
-       <property name="font">
-        <font>
-         <family>Open Sans</family>
-         <pointsize>12</pointsize>
-        </font>
+      </widget>
+      <widget class="QWidget" name="verticalLayoutWidget">
+       <property name="geometry">
+        <rect>
+         <x>610</x>
+         <y>10</y>
+         <width>73</width>
+         <height>441</height>
+        </rect>
        </property>
-       <property name="styleSheet">
-        <string notr="true">Background-color: rgb(0, 105, 180)</string>
-       </property>
-       <property name="verticalScrollBarPolicy">
-        <enum>Qt::ScrollBarAlwaysOff</enum>
-       </property>
-       <property name="horizontalScrollBarPolicy">
-        <enum>Qt::ScrollBarAlwaysOff</enum>
-       </property>
-       <property name="undoRedoEnabled">
-        <bool>false</bool>
-       </property>
-       <property name="html">
-        <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <property name="sizeConstraint">
+         <enum>QLayout::SetDefaultConstraint</enum>
+        </property>
+        <property name="bottomMargin">
+         <number>1</number>
+        </property>
+        <item>
+         <widget class="QTextBrowser" name="FlowText">
+          <property name="font">
+           <font>
+            <family>Open Sans</family>
+            <pointsize>12</pointsize>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">Background-color: rgb(0, 105, 180)</string>
+          </property>
+          <property name="verticalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOff</enum>
+          </property>
+          <property name="horizontalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOff</enum>
+          </property>
+          <property name="undoRedoEnabled">
+           <bool>false</bool>
+          </property>
+          <property name="html">
+           <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Open Sans'; font-size:12pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p align=&quot;right&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2';&quot;&gt;Flow&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-       <property name="overwriteMode">
-        <bool>false</bool>
-       </property>
-      </widget>
-      <widget class="QTextBrowser" name="O2Text">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>350</y>
-         <width>81</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <family>Open Sans</family>
-         <pointsize>12</pointsize>
-        </font>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">Background-color: rgb(0, 105, 180)</string>
-       </property>
-       <property name="verticalScrollBarPolicy">
-        <enum>Qt::ScrollBarAlwaysOff</enum>
-       </property>
-       <property name="horizontalScrollBarPolicy">
-        <enum>Qt::ScrollBarAlwaysOff</enum>
-       </property>
-       <property name="undoRedoEnabled">
-        <bool>false</bool>
-       </property>
-       <property name="html">
-        <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+          </property>
+          <property name="overwriteMode">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="FlowLabel">
+          <property name="font">
+           <font>
+            <family>Open Sans</family>
+           </font>
+          </property>
+          <property name="text">
+           <string>---</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+          <property name="openExternalLinks">
+           <bool>false</bool>
+          </property>
+          <property name="textInteractionFlags">
+           <set>Qt::LinksAccessibleByMouse|Qt::TextEditable</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QTextBrowser" name="O2Text">
+          <property name="font">
+           <font>
+            <family>Open Sans</family>
+            <pointsize>12</pointsize>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">Background-color: rgb(0, 105, 180)</string>
+          </property>
+          <property name="verticalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOff</enum>
+          </property>
+          <property name="horizontalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOff</enum>
+          </property>
+          <property name="undoRedoEnabled">
+           <bool>false</bool>
+          </property>
+          <property name="html">
+           <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Open Sans'; font-size:12pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p align=&quot;right&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;O&lt;span style=&quot; vertical-align:sub;&quot;&gt;2&lt;/span&gt;&lt;/p&gt;
 &lt;p align=&quot;right&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; vertical-align:sub;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-       <property name="overwriteMode">
-        <bool>false</bool>
-       </property>
-      </widget>
-      <widget class="QTextBrowser" name="PLimitText">
-       <property name="geometry">
-        <rect>
-         <x>180</x>
-         <y>350</y>
-         <width>81</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <family>Open Sans</family>
-         <pointsize>12</pointsize>
-        </font>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">Background-color: rgb(0, 105, 180)</string>
-       </property>
-       <property name="verticalScrollBarPolicy">
-        <enum>Qt::ScrollBarAlwaysOff</enum>
-       </property>
-       <property name="horizontalScrollBarPolicy">
-        <enum>Qt::ScrollBarAlwaysOff</enum>
-       </property>
-       <property name="undoRedoEnabled">
-        <bool>false</bool>
-       </property>
-       <property name="html">
-        <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Open Sans'; font-size:12pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;right&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;P&lt;span style=&quot; vertical-align:sub;&quot;&gt;Limit&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-       <property name="overwriteMode">
-        <bool>false</bool>
-       </property>
-      </widget>
-      <widget class="QTextBrowser" name="PinspText">
-       <property name="geometry">
-        <rect>
-         <x>180</x>
-         <y>330</y>
-         <width>81</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <family>Open Sans</family>
-         <pointsize>12</pointsize>
-        </font>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">Background-color: rgb(0, 105, 180)</string>
-       </property>
-       <property name="verticalScrollBarPolicy">
-        <enum>Qt::ScrollBarAlwaysOff</enum>
-       </property>
-       <property name="horizontalScrollBarPolicy">
-        <enum>Qt::ScrollBarAlwaysOff</enum>
-       </property>
-       <property name="undoRedoEnabled">
-        <bool>false</bool>
-       </property>
-       <property name="html">
-        <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+          </property>
+          <property name="overwriteMode">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="O2Label">
+          <property name="font">
+           <font>
+            <family>Open Sans</family>
+           </font>
+          </property>
+          <property name="text">
+           <string>---</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+          <property name="textInteractionFlags">
+           <set>Qt::LinksAccessibleByMouse|Qt::TextEditable</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QTextBrowser" name="PinspText">
+          <property name="font">
+           <font>
+            <family>Open Sans</family>
+            <pointsize>12</pointsize>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">Background-color: rgb(0, 105, 180)</string>
+          </property>
+          <property name="verticalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOff</enum>
+          </property>
+          <property name="horizontalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOff</enum>
+          </property>
+          <property name="undoRedoEnabled">
+           <bool>false</bool>
+          </property>
+          <property name="html">
+           <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Open Sans'; font-size:12pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p align=&quot;right&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;P&lt;span style=&quot; vertical-align:sub;&quot;&gt;INSP&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-       <property name="overwriteMode">
-        <bool>false</bool>
-       </property>
-      </widget>
-      <widget class="QTextBrowser" name="RampText">
-       <property name="geometry">
-        <rect>
-         <x>520</x>
-         <y>330</y>
-         <width>81</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <family>Open Sans</family>
-         <pointsize>12</pointsize>
-        </font>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">Background-color: rgb(0, 105, 180)</string>
-       </property>
-       <property name="verticalScrollBarPolicy">
-        <enum>Qt::ScrollBarAlwaysOff</enum>
-       </property>
-       <property name="horizontalScrollBarPolicy">
-        <enum>Qt::ScrollBarAlwaysOff</enum>
-       </property>
-       <property name="undoRedoEnabled">
-        <bool>false</bool>
-       </property>
-       <property name="html">
-        <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+          </property>
+          <property name="overwriteMode">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="PinspLabel">
+          <property name="font">
+           <font>
+            <family>Open Sans</family>
+           </font>
+          </property>
+          <property name="text">
+           <string>---</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+          <property name="openExternalLinks">
+           <bool>false</bool>
+          </property>
+          <property name="textInteractionFlags">
+           <set>Qt::LinksAccessibleByMouse|Qt::TextEditable</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QTextBrowser" name="PLimitText">
+          <property name="font">
+           <font>
+            <family>Open Sans</family>
+            <pointsize>12</pointsize>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">Background-color: rgb(0, 105, 180)</string>
+          </property>
+          <property name="verticalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOff</enum>
+          </property>
+          <property name="horizontalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOff</enum>
+          </property>
+          <property name="undoRedoEnabled">
+           <bool>false</bool>
+          </property>
+          <property name="html">
+           <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Open Sans'; font-size:12pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;right&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2';&quot;&gt;Ramp&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-       <property name="overwriteMode">
-        <bool>false</bool>
-       </property>
-      </widget>
-      <widget class="QTextBrowser" name="fText">
-       <property name="geometry">
-        <rect>
-         <x>520</x>
-         <y>350</y>
-         <width>81</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <family>Open Sans</family>
-         <pointsize>12</pointsize>
-        </font>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">Background-color: rgb(0, 105, 180)</string>
-       </property>
-       <property name="verticalScrollBarPolicy">
-        <enum>Qt::ScrollBarAlwaysOff</enum>
-       </property>
-       <property name="horizontalScrollBarPolicy">
-        <enum>Qt::ScrollBarAlwaysOff</enum>
-       </property>
-       <property name="undoRedoEnabled">
-        <bool>false</bool>
-       </property>
-       <property name="html">
-        <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;p align=&quot;right&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;P&lt;span style=&quot; vertical-align:sub;&quot;&gt;Limit&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="overwriteMode">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="PLimLabel">
+          <property name="font">
+           <font>
+            <family>Open Sans</family>
+           </font>
+          </property>
+          <property name="text">
+           <string>---</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+          <property name="textInteractionFlags">
+           <set>Qt::LinksAccessibleByMouse|Qt::TextEditable</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QTextBrowser" name="TInspText">
+          <property name="font">
+           <font>
+            <family>Open Sans</family>
+            <pointsize>12</pointsize>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">Background-color: rgb(0, 105, 180)</string>
+          </property>
+          <property name="verticalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOff</enum>
+          </property>
+          <property name="horizontalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOff</enum>
+          </property>
+          <property name="undoRedoEnabled">
+           <bool>false</bool>
+          </property>
+          <property name="html">
+           <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Open Sans'; font-size:12pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;right&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;f&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-       <property name="overwriteMode">
-        <bool>false</bool>
-       </property>
-      </widget>
-      <widget class="QTextBrowser" name="PeepText">
-       <property name="geometry">
-        <rect>
-         <x>350</x>
-         <y>350</y>
-         <width>81</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <family>Open Sans</family>
-         <pointsize>12</pointsize>
-        </font>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">Background-color: rgb(0, 105, 180)</string>
-       </property>
-       <property name="verticalScrollBarPolicy">
-        <enum>Qt::ScrollBarAlwaysOff</enum>
-       </property>
-       <property name="horizontalScrollBarPolicy">
-        <enum>Qt::ScrollBarAlwaysOff</enum>
-       </property>
-       <property name="undoRedoEnabled">
-        <bool>false</bool>
-       </property>
-       <property name="html">
-        <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;p align=&quot;right&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2';&quot;&gt;T&lt;/span&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; vertical-align:sub;&quot;&gt;INSP&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="overwriteMode">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="TInspLabel">
+          <property name="font">
+           <font>
+            <family>Open Sans</family>
+           </font>
+          </property>
+          <property name="text">
+           <string>---</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+          <property name="openExternalLinks">
+           <bool>false</bool>
+          </property>
+          <property name="textInteractionFlags">
+           <set>Qt::LinksAccessibleByMouse|Qt::TextEditable</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QTextBrowser" name="PeepText">
+          <property name="font">
+           <font>
+            <family>Open Sans</family>
+            <pointsize>12</pointsize>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">Background-color: rgb(0, 105, 180)</string>
+          </property>
+          <property name="verticalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOff</enum>
+          </property>
+          <property name="horizontalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOff</enum>
+          </property>
+          <property name="undoRedoEnabled">
+           <bool>false</bool>
+          </property>
+          <property name="html">
+           <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Open Sans'; font-size:12pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p align=&quot;right&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2';&quot;&gt;Peep&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-       <property name="overwriteMode">
-        <bool>false</bool>
-       </property>
+          </property>
+          <property name="overwriteMode">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="PeepLabel">
+          <property name="font">
+           <font>
+            <family>Open Sans</family>
+           </font>
+          </property>
+          <property name="text">
+           <string>---</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+          <property name="textInteractionFlags">
+           <set>Qt::LinksAccessibleByMouse|Qt::TextEditable</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QTextBrowser" name="RampText">
+          <property name="font">
+           <font>
+            <family>Open Sans</family>
+            <pointsize>12</pointsize>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">Background-color: rgb(0, 105, 180)</string>
+          </property>
+          <property name="verticalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOff</enum>
+          </property>
+          <property name="horizontalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOff</enum>
+          </property>
+          <property name="undoRedoEnabled">
+           <bool>false</bool>
+          </property>
+          <property name="html">
+           <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Open Sans'; font-size:12pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;right&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2';&quot;&gt;Ramp&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="overwriteMode">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="RampLabel">
+          <property name="font">
+           <font>
+            <family>Open Sans</family>
+           </font>
+          </property>
+          <property name="layoutDirection">
+           <enum>Qt::LeftToRight</enum>
+          </property>
+          <property name="styleSheet">
+           <string notr="true"/>
+          </property>
+          <property name="text">
+           <string>---</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+          <property name="openExternalLinks">
+           <bool>false</bool>
+          </property>
+          <property name="textInteractionFlags">
+           <set>Qt::LinksAccessibleByMouse|Qt::TextEditable</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QTextBrowser" name="fText">
+          <property name="font">
+           <font>
+            <family>Open Sans</family>
+            <pointsize>12</pointsize>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">Background-color: rgb(0, 105, 180)</string>
+          </property>
+          <property name="verticalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOff</enum>
+          </property>
+          <property name="horizontalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOff</enum>
+          </property>
+          <property name="undoRedoEnabled">
+           <bool>false</bool>
+          </property>
+          <property name="html">
+           <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Open Sans'; font-size:12pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;right&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;f&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="overwriteMode">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="fLabel">
+          <property name="font">
+           <font>
+            <family>Open Sans</family>
+           </font>
+          </property>
+          <property name="text">
+           <string>---</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+          <property name="textInteractionFlags">
+           <set>Qt::LinksAccessibleByMouse|Qt::TextEditable</set>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </widget>
      </widget>
-     <widget class="QWidget" name="tab">
+     <widget class="QWidget" name="MedSettings_tab">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
+      <property name="styleSheet">
+       <string notr="true">border-radius: 3px;
+Background-color: #1491CC;
+border: 1px solid black;
+
+/*QLabel{ border-radius: 3px;
+Background-color: #1491CC;
+border: 1px solid black;}
+
+</string>
+      </property>
       <attribute name="icon">
        <iconset>
-        <normaloff>resources/Arzt.svg</normaloff>
-        <normalon>:/resources/Arzt.svg</normalon>resources/Arzt.svg</iconset>
+        <normaloff>resources/MedSettings.svg</normaloff>resources/MedSettings.svg</iconset>
       </attribute>
       <attribute name="title">
        <string/>
@@ -756,8 +639,8 @@ p, li { white-space: pre-wrap; }
        </property>
        <property name="geometry">
         <rect>
-         <x>330</x>
-         <y>410</y>
+         <x>280</x>
+         <y>350</y>
          <width>171</width>
          <height>31</height>
         </rect>
@@ -772,8 +655,8 @@ p, li { white-space: pre-wrap; }
        </property>
        <property name="geometry">
         <rect>
-         <x>150</x>
-         <y>410</y>
+         <x>100</x>
+         <y>350</y>
          <width>171</width>
          <height>31</height>
         </rect>
@@ -785,76 +668,29 @@ p, li { white-space: pre-wrap; }
       <widget class="QSlider" name="verticalSlider">
        <property name="geometry">
         <rect>
-         <x>90</x>
-         <y>50</y>
+         <x>10</x>
+         <y>10</y>
          <width>81</width>
          <height>281</height>
         </rect>
        </property>
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-      </widget>
-      <widget class="QSlider" name="verticalSlider_2">
-       <property name="geometry">
-        <rect>
-         <x>180</x>
-         <y>50</y>
-         <width>81</width>
-         <height>281</height>
-        </rect>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-      </widget>
-      <widget class="QSlider" name="verticalSlider_3">
-       <property name="geometry">
-        <rect>
-         <x>270</x>
-         <y>50</y>
-         <width>81</width>
-         <height>281</height>
-        </rect>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-      </widget>
-      <widget class="QSlider" name="verticalSlider_4">
-       <property name="geometry">
-        <rect>
-         <x>360</x>
-         <y>50</y>
-         <width>81</width>
-         <height>281</height>
-        </rect>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-      </widget>
-      <widget class="QSlider" name="verticalSlider_9">
-       <property name="geometry">
-        <rect>
-         <x>450</x>
-         <y>50</y>
-         <width>81</width>
-         <height>281</height>
-        </rect>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-      </widget>
-      <widget class="QSlider" name="verticalSlider_10">
-       <property name="geometry">
-        <rect>
-         <x>540</x>
-         <y>50</y>
-         <width>81</width>
-         <height>281</height>
-        </rect>
+       <property name="styleSheet">
+        <string notr="true">.QSlider {
+}
+
+.QSlider::groove:vertical {
+    border: 1px solid #262626;
+    width: 5px;
+  	 background: rgb(255, 255, 255) ;
+    margin: 0 12px;
+}
+
+.QSlider::handle:vertical {
+    background: rgb(0, 105, 180);
+    border: 1px solid rgb(0, 0, 0);
+    height: 30px;
+    margin: -0px -35px;
+}</string>
        </property>
        <property name="orientation">
         <enum>Qt::Vertical</enum>
@@ -863,8 +699,8 @@ p, li { white-space: pre-wrap; }
       <widget class="QTextBrowser" name="PinspText_3">
        <property name="geometry">
         <rect>
-         <x>90</x>
-         <y>340</y>
+         <x>10</x>
+         <y>300</y>
          <width>81</width>
          <height>21</height>
         </rect>
@@ -901,8 +737,8 @@ p, li { white-space: pre-wrap; }
       <widget class="QTextBrowser" name="fText_3">
        <property name="geometry">
         <rect>
-         <x>540</x>
-         <y>340</y>
+         <x>460</x>
+         <y>300</y>
          <width>81</width>
          <height>21</height>
         </rect>
@@ -939,8 +775,8 @@ p, li { white-space: pre-wrap; }
       <widget class="QTextBrowser" name="TInspText_3">
        <property name="geometry">
         <rect>
-         <x>270</x>
-         <y>340</y>
+         <x>190</x>
+         <y>300</y>
          <width>81</width>
          <height>21</height>
         </rect>
@@ -977,8 +813,8 @@ p, li { white-space: pre-wrap; }
       <widget class="QTextBrowser" name="PLimitText_3">
        <property name="geometry">
         <rect>
-         <x>180</x>
-         <y>340</y>
+         <x>100</x>
+         <y>300</y>
          <width>81</width>
          <height>21</height>
         </rect>
@@ -1015,8 +851,8 @@ p, li { white-space: pre-wrap; }
       <widget class="QTextBrowser" name="PeepText_3">
        <property name="geometry">
         <rect>
-         <x>360</x>
-         <y>340</y>
+         <x>280</x>
+         <y>300</y>
          <width>81</width>
          <height>21</height>
         </rect>
@@ -1053,8 +889,8 @@ p, li { white-space: pre-wrap; }
       <widget class="QTextBrowser" name="RampText_3">
        <property name="geometry">
         <rect>
-         <x>450</x>
-         <y>340</y>
+         <x>370</x>
+         <y>300</y>
          <width>81</width>
          <height>21</height>
         </rect>
@@ -1088,11 +924,416 @@ p, li { white-space: pre-wrap; }
         <bool>false</bool>
        </property>
       </widget>
+      <widget class="QSlider" name="verticalSlider_2">
+       <property name="geometry">
+        <rect>
+         <x>100</x>
+         <y>10</y>
+         <width>81</width>
+         <height>281</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">.QSlider {
+}
+
+.QSlider::groove:vertical {
+    border: 1px solid #262626;
+    width: 5px;
+  	 background: rgb(255, 255, 255) ;
+    margin: 0 12px;
+}
+
+.QSlider::handle:vertical {
+    background: rgb(0, 105, 180);
+    border: 1px solid rgb(0, 0, 0);
+    height: 30px;
+    margin: -0px -35px;
+}</string>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+      </widget>
+      <widget class="QSlider" name="verticalSlider_3">
+       <property name="geometry">
+        <rect>
+         <x>190</x>
+         <y>10</y>
+         <width>81</width>
+         <height>281</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">.QSlider {
+}
+
+.QSlider::groove:vertical {
+    border: 1px solid #262626;
+    width: 5px;
+  	 background: rgb(255, 255, 255) ;
+    margin: 0 12px;
+}
+
+.QSlider::handle:vertical {
+    background: rgb(0, 105, 180);
+    border: 1px solid rgb(0, 0, 0);
+    height: 30px;
+    margin: -0px -35px;
+}</string>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+      </widget>
+      <widget class="QSlider" name="verticalSlider_4">
+       <property name="geometry">
+        <rect>
+         <x>280</x>
+         <y>10</y>
+         <width>81</width>
+         <height>281</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">.QSlider {
+}
+
+.QSlider::groove:vertical {
+    border: 1px solid #262626;
+    width: 5px;
+  	 background: rgb(255, 255, 255) ;
+    margin: 0 12px;
+}
+
+.QSlider::handle:vertical {
+    background: rgb(0, 105, 180);
+    border: 1px solid rgb(0, 0, 0);
+    height: 30px;
+    margin: -0px -35px;
+}</string>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+      </widget>
+      <widget class="QSlider" name="verticalSlider_5">
+       <property name="geometry">
+        <rect>
+         <x>370</x>
+         <y>10</y>
+         <width>81</width>
+         <height>281</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">.QSlider {
+}
+
+.QSlider::groove:vertical {
+    border: 1px solid #262626;
+    width: 5px;
+  	 background: rgb(255, 255, 255) ;
+    margin: 0 12px;
+}
+
+.QSlider::handle:vertical {
+    background: rgb(0, 105, 180);
+    border: 1px solid rgb(0, 0, 0);
+    height: 30px;
+    margin: -0px -35px;
+}</string>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+      </widget>
+      <widget class="QSlider" name="verticalSlider_6">
+       <property name="geometry">
+        <rect>
+         <x>460</x>
+         <y>10</y>
+         <width>81</width>
+         <height>281</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">.QSlider {
+}
+
+.QSlider::groove:vertical {
+    border: 1px solid #262626;
+    width: 5px;
+  	 background: rgb(255, 255, 255) ;
+    margin: 0 12px;
+}
+
+.QSlider::handle:vertical {
+    background: rgb(0, 105, 180);
+    border: 1px solid rgb(0, 0, 0);
+    height: 30px;
+    margin: -0px -35px;
+}</string>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+      </widget>
+      <widget class="QLabel" name="RampLabel_2">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>320</y>
+         <width>81</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>Open Sans</family>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true"/>
+       </property>
+       <property name="text">
+        <string>---</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+       <property name="openExternalLinks">
+        <bool>false</bool>
+       </property>
+       <property name="textInteractionFlags">
+        <set>Qt::LinksAccessibleByMouse|Qt::TextEditable</set>
+       </property>
+      </widget>
+      <widget class="QLabel" name="RampLabel_3">
+       <property name="geometry">
+        <rect>
+         <x>100</x>
+         <y>320</y>
+         <width>81</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>Open Sans</family>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true"/>
+       </property>
+       <property name="text">
+        <string>---</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+       <property name="openExternalLinks">
+        <bool>false</bool>
+       </property>
+       <property name="textInteractionFlags">
+        <set>Qt::LinksAccessibleByMouse|Qt::TextEditable</set>
+       </property>
+      </widget>
+      <widget class="QLabel" name="RampLabel_4">
+       <property name="geometry">
+        <rect>
+         <x>190</x>
+         <y>320</y>
+         <width>81</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>Open Sans</family>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true"/>
+       </property>
+       <property name="text">
+        <string>---</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+       <property name="openExternalLinks">
+        <bool>false</bool>
+       </property>
+       <property name="textInteractionFlags">
+        <set>Qt::LinksAccessibleByMouse|Qt::TextEditable</set>
+       </property>
+      </widget>
+      <widget class="QLabel" name="RampLabel_5">
+       <property name="geometry">
+        <rect>
+         <x>280</x>
+         <y>320</y>
+         <width>81</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>Open Sans</family>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true"/>
+       </property>
+       <property name="text">
+        <string>---</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+       <property name="openExternalLinks">
+        <bool>false</bool>
+       </property>
+       <property name="textInteractionFlags">
+        <set>Qt::LinksAccessibleByMouse|Qt::TextEditable</set>
+       </property>
+      </widget>
+      <widget class="QLabel" name="RampLabel_6">
+       <property name="geometry">
+        <rect>
+         <x>370</x>
+         <y>320</y>
+         <width>81</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>Open Sans</family>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true"/>
+       </property>
+       <property name="text">
+        <string>---</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+       <property name="openExternalLinks">
+        <bool>false</bool>
+       </property>
+       <property name="textInteractionFlags">
+        <set>Qt::LinksAccessibleByMouse|Qt::TextEditable</set>
+       </property>
+      </widget>
+      <widget class="QLabel" name="RampLabel_7">
+       <property name="geometry">
+        <rect>
+         <x>460</x>
+         <y>320</y>
+         <width>81</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>Open Sans</family>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true"/>
+       </property>
+       <property name="text">
+        <string>---</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+       <property name="openExternalLinks">
+        <bool>false</bool>
+       </property>
+       <property name="textInteractionFlags">
+        <set>Qt::LinksAccessibleByMouse|Qt::TextEditable</set>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="CancelButton">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="geometry">
+        <rect>
+         <x>520</x>
+         <y>390</y>
+         <width>161</width>
+         <height>61</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>Open Sans</family>
+         <pointsize>24</pointsize>
+         <strikeout>false</strikeout>
+        </font>
+       </property>
+       <property name="text">
+        <string>CANCEL</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="StopButton">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>390</y>
+         <width>151</width>
+         <height>61</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>Open Sans</family>
+         <pointsize>24</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>STOP</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="StartButton">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="geometry">
+        <rect>
+         <x>180</x>
+         <y>390</y>
+         <width>331</width>
+         <height>61</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>Open Sans</family>
+         <pointsize>36</pointsize>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">Background-color: rgb(255, 255, 255)</string>
+       </property>
+       <property name="text">
+        <string>NO MODULE</string>
+       </property>
+      </widget>
      </widget>
      <widget class="QWidget" name="Alarm_Tab">
       <attribute name="icon">
        <iconset>
-        <normaloff>resources/Alarm.svg</normaloff>resources/Alarm.svg</iconset>
+        <normaloff>resources/Alarms.svg</normaloff>resources/Alarms.svg</iconset>
       </attribute>
       <attribute name="title">
        <string/>
@@ -1107,8 +1348,8 @@ p, li { white-space: pre-wrap; }
       </property>
       <attribute name="icon">
        <iconset>
-        <normaloff>resources/settings.svg</normaloff>
-        <normalon>:/resources/settings.svg</normalon>resources/settings.svg</iconset>
+        <normaloff>resources/TecSettings.svg</normaloff>
+        <normalon>:/resources/settings.svg</normalon>resources/TecSettings.svg</iconset>
       </attribute>
       <attribute name="title">
        <string/>
@@ -1161,6 +1402,12 @@ p, li { white-space: pre-wrap; }
    <class>PlotWidget</class>
    <extends>QWidget</extends>
    <header>pyqtgraph</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>TabWidget</class>
+   <extends>QTabWidget</extends>
+   <header>tabwidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

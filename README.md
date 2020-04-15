@@ -7,9 +7,9 @@ To clone this repository, use the following command:
 `git clone git@github.com:trinamic/TOSV-UserInterface.git`
 
 To run the code you have to install the following libraries:
--PyTrinamic 
--PyQt5
--pyqtgraph
+- PyTrinamic 
+- PyQt5
+- pyqtgraph
 
 Important note: 
 The pyqtgraph library currently distributed via pip is not
