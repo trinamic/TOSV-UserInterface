@@ -14,7 +14,7 @@ class TMC4671_TMC6100_TOSV_REF(object):
         self.motor = 0
 
     def showChipInfo(self):
-        ("TMC4671-TMC6100-TOSV-REF. Voltage supply: 12 - 36V");
+        print("TMC4671-TMC6100-TOSV-REF. Voltage supply: 12 - 36V")
 
     " axis parameter access "
     def axisParameter(self, apType):
@@ -35,7 +35,8 @@ class TMC4671_TMC6100_TOSV_REF(object):
         self.setAxisParameter(self.APs.TargetVelocity, velocity)
 
     def actualVelocity(self):
-        return self.axisParameter(self.APs.ActualVelocity)
+        reg_value = self.axisParameter(self.APs.ActualVelocity)
+        return twos_comp(reg_value, 32)
 
     def showMotorConfiguration(self):
         print("Motor configuration:")
@@ -91,14 +92,34 @@ class _APs():
     EnableVelocityRamp          = 29
     Acceleration                = 30
     Deceleration                = 31
+    TargetPressure              = 32
+    RampPressure                = 33
+    ActualPressure              = 34
     TorqueP                     = 35
     TorqueI                     = 36
     VelocityP                   = 37
     VelocityI                   = 38
+    PressureP                   = 39
+    PressureI                   = 40
+    TorquePIErrorSum            = 41
+    FluxPIErrorSum              = 42
+    VelocityPIErrorSum          = 43
+    PressurePIErrorSum          = 44
     HallPolarity                = 50
     HallDirection               = 51
     HallInterpolation           = 52
     HallPhiEOffset              = 53
+
+    TOSVEnable                  = 100
+    TOSVState                   = 101
+    TOSVTimer                   = 102
+    TOSVStatupTime              = 103
+    TOSVInhalationRiseTime      = 104
+    TOSVInhalationPouseTime     = 105
+    TOSVExhalationFallTime      = 106
+    TOSVExhalationPauseTime     = 107
+    TOSVLIMITPresssure          = 108
+    TOSVPEEPPressure            = 109
     
     " diagnostic parameter "
     MainLoopsPerSecond          = 250
@@ -119,3 +140,13 @@ class _GPs():
     SerialBaudRate          = 65
     SerialModuleAddress     = 66
     SerialHostAddress       = 76
+
+
+def twos_comp(val, bits):
+    """computes the 2's complement of an int value
+
+    taken from: https://stackoverflow.com/questions/1604464/twos-complement-in-python
+    """
+    if (val & (1 << (bits - 1))) != 0:  # if sign bit is set e.g., 8bit: 128-255
+        val = val - (1 << bits)         # compute negative value
+    return val                          # return positive value as is
