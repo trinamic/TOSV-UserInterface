@@ -10,7 +10,7 @@ import sys
 import numpy
 import time
 
-from PyQt5 import QtWidgets, uic, QtCore
+from PyQt5 import QtWidgets, uic, QtCore, QtGui, Qt
 import pyqtgraph as pg
 
 
@@ -28,17 +28,22 @@ class Ui(QtWidgets.QWidget):
         super(Ui, self).__init__()
         uic.loadUi('TOSV-GUI.ui', self)
         self.Interface = TOSV_Interface()
-        self.updatetime = 50
+        self.updatetime = 50        
+                
         #Define Varibles for VolumeGraph 
         self.maxDataPoints = 12*60*60*(1000/self.updatetime)#For aprox. 12h of data record
         #self.n_data = 50 
         #self.x_data = numpy.array(range(self.n_data))
         self.time_data = numpy.array([time.time()])
         self.Volume_data = numpy.array([0])
+        self.Flow_data = numpy.array([0])
+        self.Pressure_data = numpy.array([0])
+
         
         #self.y_data = numpy.sin(self.x_data/5)
         
         self.running = False
+        self.wasconnected = False
 
         #Define Buttons
         self.ConnectButton = self.findChild(QtWidgets.QPushButton, 'ConnectButton')
@@ -46,6 +51,8 @@ class Ui(QtWidgets.QWidget):
         self.StopButton = self.findChild(QtWidgets.QPushButton, 'StopButton')
         self.CancelButton = self.findChild(QtWidgets.QPushButton, 'CancelButton')
         self.DisconnectButton = self.findChild(QtWidgets.QPushButton, 'DisconnectButton')
+        self.SetMedSettingsButton = self.findChild(QtWidgets.QPushButton, 'SetMedSettingsButton')
+        self.CancelMedSettingsButton = self.findChild(QtWidgets.QPushButton, 'CancelMedSettingsButton')
         #Set up Buttons
         self.StopButton.hide()
         self.CancelButton.hide()
@@ -57,13 +64,41 @@ class Ui(QtWidgets.QWidget):
              
         self.StopButton.clicked.connect(self.stop)
         self.CancelButton.clicked.connect(self.cancel)
+        
+        self.SetMedSettingsButton.clicked.connect(self.writeMedSettings)
+        self.CancelMedSettingsButton.clicked.connect(self.clearMedChanges)
+        
         #Buttons are disabled
         #self.ConnectButton.clicked.connect(self.Interface.connect)
         #self.DisconnectButton.clicked.connect(self.Interface.disconnect)
-    
+        #Define Sliders
+        self.TInspRiseSlider = self.findChild(QtWidgets.QSlider, 'SliderTInspRise')
+        self.TInspHoldSlider = self.findChild(QtWidgets.QSlider, 'SliderTInspHold')
+        self.TExpFallSlider = self.findChild(QtWidgets.QSlider, 'SliderTExpFall')
+        self.TExpHoldSlider = self.findChild(QtWidgets.QSlider, 'SliderTExpHold')
+        
+        self.PEEPSlider = self.findChild(QtWidgets.QSlider, 'SliderPEEP')
+        self.PLimitSlider = self.findChild(QtWidgets.QSlider, 'SliderPLimit')
+
     
         #Define Labels
-        #self.LabelCurrRPM = self.findChild(QtWidgets.QLabel, 'CurrentMotorRPM')
+        #Labels in Overview
+        self.LabelVolume = self.findChild(QtWidgets.QLabel, 'VolumeLabel')
+        self.LabelFlow = self.findChild(QtWidgets.QLabel, 'FlowLabel')
+        self.LabelPMax = self.findChild(QtWidgets.QLabel, 'PMaxLabel')
+        self.LabelPLimit = self.findChild(QtWidgets.QLabel, 'PLimLabel')
+        self.LabelPEEP = self.findChild(QtWidgets.QLabel, 'PeepLabel')
+        self.Labelfreq = self.findChild(QtWidgets.QLabel, 'fLabel')
+        
+        #Labels in MedSettings
+        self.LabelSetTInspRise = self.findChild(QtWidgets.QLabel, 'SetTInspRise')
+        self.LabelSetTInspHold = self.findChild(QtWidgets.QLabel, 'SetTInspHold')
+        self.LabelSetTExpFall = self.findChild(QtWidgets.QLabel, 'SetTExpFall')
+        self.LabelSetTExpHold = self.findChild(QtWidgets.QLabel, 'SetTExpHold')
+        self.LabelSetPEEP = self.findChild(QtWidgets.QLabel, 'SetPeepLabel')
+        self.LabelSetPLimit = self.findChild(QtWidgets.QLabel, 'setPLimitLabel')
+        self.LabelResultFreq = self.findChild(QtWidgets.QLabel, 'ResultingFreqLabel')
+    
         
         #Setting up Graphs
         #Setting up VolumeGraph
@@ -112,26 +147,28 @@ class Ui(QtWidgets.QWidget):
             self.showFullScreen()
             #self.setCursor(QtCore.Qt.BlankCursor)
         else:
-            self.show() 
-
+            self.show()
+            
     #Updating the GUI periodically, called by timer. 
     #ToDo: Cleanup 
     def update_gui(self):
         if self.Interface.getConnection() == True:
+            self.SetMedSettingsButton.setEnabled(True);
+            self.CancelMedSettingsButton.setEnabled(True);
             #Update VolumeGraph
-            self.data = self.Interface.getActualVelocity()
+            self.data = self.Interface.getActualPressure()
             if self.data:
-                if self.Volume_data.size < self.maxDataPoints:
-                    self.Volume_data = numpy.append(self.Volume_data , self.data)
+                if self.Pressure_data.size < self.maxDataPoints:
+                    self.Pressure_data = numpy.append(self.Pressure_data , self.data)
                     self.time_data = numpy.append(self.time_data , time.time())
                 else:
-                    self.Volume_data = numpy.roll(self.Volume_data,-1)
+                    self.Pressure_data = numpy.roll(self.Pressure_data,-1)
                     self.time_data = numpy.roll(self.time_data,-1)
                     self.y_data[self.Volume_data.size-1] = self.data1
                     self.time_data[self.time_data.size-1] = time.time()
             x_axis = numpy.subtract(self.time_data,time.time())
-            y_axix = self.Volume_data
-            self.VolumeGraph.plot(x_axis, y_axix, clear=True,fillLevel=0, pen=self.pen ,brush=(255,255,255,255))
+            y_axix = self.Pressure_data
+            self.PressureGraph.plot(x_axis, y_axix, clear=True,fillLevel=0, pen=self.pen ,brush=(255,255,255,255))
             
             #Setting            
             if self.running == True:
@@ -148,16 +185,48 @@ class Ui(QtWidgets.QWidget):
         else: 
             #self.LabelCurrRPM.setText("-")
             #self.LabelTarRPM.setText("-")
-            self.Start_Stop_Button.setText("NO MODULE")  
+            self.Start_Stop_Button.setText("NO MODULE")
+            self.SetMedSettingsButton.setEnabled(False);
+            self.CancelMedSettingsButton.setEnabled(False);
             self.Start_Stop_Button.setStyleSheet("background-color : rgb(255, 255, 0)")  
     
+        #Update Values under slieder
+        self.LabelSetTInspRise.setText(str(self.TInspRiseSlider.value()/1000)+"s")
+        self.LabelSetTInspHold.setText(str(self.TInspHoldSlider.value()/1000)+"s")
+        self.LabelSetTExpFall.setText(str(self.TExpFallSlider.value()/1000)+"s")
+        self.LabelSetTExpHold.setText(str(self.TExpHoldSlider.value()/1000)+"s")
+        
+        self.LabelSetPEEP.setText(str(self.PEEPSlider.value()/100)+"mbar")
+        self.LabelSetPLimit.setText(str(self.PLimitSlider.value()/100)+"mbar")
+        CycleTime = self.TInspRiseSlider.value()+self.TInspHoldSlider.value()+self.TExpFallSlider.value()+self.TExpHoldSlider.value()
+        if CycleTime != 0:
+            CycleFreq = 60000/CycleTime
+            self.LabelResultFreq.setText(str("{:.2f}".format(CycleFreq))+" /min")
+        else: 
+            self.LabelResultFreq.setText("--")
+
+    
+    
     #function called when start/stop button pressed. Starting program or counting down to confirm stop            
+    #Paint Trinamic logo
+    def paintEvent(self, event):
+        painter = QtGui.QPainter(self)
+        xcor = 689
+        ycor = 395
+        xsize = 125
+        ysize = 110/170*xsize
+        painter.drawImage(QtCore.QRectF(xcor, ycor ,xsize, ysize), QtGui.QImage('resources/trinamic_logo.svg'))
+        painter.setPen(QtGui.QColor(0,0,0))
+        painter.setFont(QtGui.QFont('OpenSans', 10))
+        painter.drawText(QtCore.QRectF(xcor, ycor+ysize, ysize, ysize), QtCore.Qt.AlignCenter, "TOSV")
+        painter.save()
+    
     def start_Stop_Button_pressed(self):
         print("running") 
         if self.Interface.getConnection() == True:
             if self.running == False:
                 print("startTest") 
-                self.Interface.startTest()
+                self.Interface.startVentilation()
                 self.running = True
             else:
                 print("start timer") 
@@ -181,7 +250,7 @@ class Ui(QtWidgets.QWidget):
     #stop button pressed
     def stop(self):
         self.running = False
-        self.Interface.stopTest()
+        self.Interface.stopVentilation()
         self.Start_Stop_Button.show()
         self.StopButton.hide()
         self.CancelButton.hide()
@@ -191,21 +260,49 @@ class Ui(QtWidgets.QWidget):
         self.StopButton.hide()
         self.CancelButton.hide()    
     #reconnect when no connection 
-    #ToDo: try to detekt lost connection
+    #ToDo: try to detect lost connection
     def reconnect(self):
-        if(self.Interface.getConnection() == False):
+        if self.Interface.getConnection() == False:
             self.Interface.connect()
-            
-    
+            self.wasconnected = False
+        else: 
+            if (self.wasconnected == False):
+            #load values in board on connection start
+                self.running = self.Interface.getStatus()
+                self.clearMedChanges()
+                self.wasconnected = True
+                
     def keyPressEvent(self, event):
         if event.key() == QtCore.Qt.Key_F11:
             if self.windowState() & QtCore.Qt.WindowFullScreen:
                 self.showNormal()
             else:
                 self.showFullScreen()
-            
-            
-            
+    #Function writes the setted MedSetting values on button press to module              
+    def writeMedSettings(self):
+        self.Interface.setInhalationRiseTime(self.TInspRiseSlider.value())
+        self.Interface.setInhalationPouseTime(self.TInspHoldSlider.value())
+        self.Interface.setExhalationFallTime(self.TExpFallSlider.value())
+        self.Interface.setExhalationPauseTime(self.TExpHoldSlider.value())
+        self.Interface.setLIMITPresssure(self.PLimitSlider.value())
+        self.Interface.setPEEPPressure(self.PEEPSlider.value())
+        return 
+    #Function setts the slieders in MedSettings back to values set in module 
+    def clearMedChanges(self):
+        try:
+            self.TInspRiseSlider.setValue(self.Interface.getInhalationRiseTime())
+            self.TInspHoldSlider.setValue(self.Interface.getInhalationPouseTime())
+            self.TInspRiseSlider.setValue(self.Interface.getInhalationRiseTime())
+            self.TExpFallSlider.setValue(self.Interface.getExhalationFallTime())
+            self.TExpHoldSlider.setValue(self.Interface.getExhalationPauseTime())
+            self.PLimitSlider.setValue(self.Interface.getLIMITPresssure())
+            self.PEEPSlider.setValue(self.Interface.getPEEPPressure())
+            print("Loading Settings from board")
+        except:
+            print("ERROR, Loading Settings from board")
+       
+         
+                
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     #app.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)

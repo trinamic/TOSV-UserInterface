@@ -28,7 +28,9 @@
    <string>Form</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-color:rgb(20, 145, 204)</string>
+   <string notr="true">#Form{
+background-color:rgb(20, 145, 204);
+}</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
@@ -74,7 +76,7 @@ border-color: rgb(0, 0, 0);
 background: rgb(20, 145, 204);
 }
 QTabBar::tab:!selected {
-margin-top: 2px; /* make non-selected tabs look smaller */
+/*margin-top: 2px;  make non-selected tabs look smaller */
 background: rgb(0, 105, 180);
 }</string>
      </property>
@@ -95,6 +97,9 @@ background: rgb(0, 105, 180);
      </property>
      <property name="elideMode">
       <enum>Qt::ElideNone</enum>
+     </property>
+     <property name="usesScrollButtons">
+      <bool>true</bool>
      </property>
      <property name="tabBarAutoHide">
       <bool>false</bool>
@@ -143,6 +148,19 @@ border: 1px solid black;}
          <family>Open Sans</family>
         </font>
        </property>
+       <widget class="QLabel" name="label_2">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>51</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Volume</string>
+        </property>
+       </widget>
       </widget>
       <widget class="PlotWidget" name="FlowGraph" native="true">
        <property name="geometry">
@@ -159,6 +177,19 @@ border: 1px solid black;}
          <pointsize>16</pointsize>
         </font>
        </property>
+       <widget class="QLabel" name="label">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>51</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Flow</string>
+        </property>
+       </widget>
       </widget>
       <widget class="PlotWidget" name="PressureGraph" native="true">
        <property name="geometry">
@@ -169,6 +200,19 @@ border: 1px solid black;}
          <height>141</height>
         </rect>
        </property>
+       <widget class="QLabel" name="label_3">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>51</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Pressure</string>
+        </property>
+       </widget>
       </widget>
       <widget class="QWidget" name="verticalLayoutWidget">
        <property name="geometry">
@@ -188,6 +232,12 @@ border: 1px solid black;}
         </property>
         <item>
          <widget class="QTextBrowser" name="FlowText">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="font">
            <font>
             <family>Open Sans</family>
@@ -211,7 +261,7 @@ border: 1px solid black;}
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Open Sans'; font-size:12pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;right&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2';&quot;&gt;Flow&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;p align=&quot;right&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2';&quot;&gt;Volume&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
           <property name="overwriteMode">
            <bool>false</bool>
@@ -219,7 +269,7 @@ p, li { white-space: pre-wrap; }
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="FlowLabel">
+         <widget class="QLabel" name="VolumeLabel">
           <property name="font">
            <font>
             <family>Open Sans</family>
@@ -241,6 +291,12 @@ p, li { white-space: pre-wrap; }
         </item>
         <item>
          <widget class="QTextBrowser" name="O2Text">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="font">
            <font>
             <family>Open Sans</family>
@@ -264,8 +320,7 @@ p, li { white-space: pre-wrap; }
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Open Sans'; font-size:12pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;right&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;O&lt;span style=&quot; vertical-align:sub;&quot;&gt;2&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;right&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; vertical-align:sub;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;p align=&quot;right&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Flow&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
           <property name="overwriteMode">
            <bool>false</bool>
@@ -273,7 +328,7 @@ p, li { white-space: pre-wrap; }
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="O2Label">
+         <widget class="QLabel" name="FlowLabel">
           <property name="font">
            <font>
             <family>Open Sans</family>
@@ -292,6 +347,12 @@ p, li { white-space: pre-wrap; }
         </item>
         <item>
          <widget class="QTextBrowser" name="PinspText">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="font">
            <font>
             <family>Open Sans</family>
@@ -315,7 +376,7 @@ p, li { white-space: pre-wrap; }
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Open Sans'; font-size:12pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;right&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;P&lt;span style=&quot; vertical-align:sub;&quot;&gt;INSP&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;p align=&quot;right&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;P&lt;span style=&quot; vertical-align:sub;&quot;&gt;Max&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
           <property name="overwriteMode">
            <bool>false</bool>
@@ -323,7 +384,7 @@ p, li { white-space: pre-wrap; }
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="PinspLabel">
+         <widget class="QLabel" name="PMaxLabel">
           <property name="font">
            <font>
             <family>Open Sans</family>
@@ -345,6 +406,12 @@ p, li { white-space: pre-wrap; }
         </item>
         <item>
          <widget class="QTextBrowser" name="PLimitText">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="font">
            <font>
             <family>Open Sans</family>
@@ -395,6 +462,12 @@ p, li { white-space: pre-wrap; }
         </item>
         <item>
          <widget class="QTextBrowser" name="TInspText">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="font">
            <font>
             <family>Open Sans</family>
@@ -418,7 +491,7 @@ p, li { white-space: pre-wrap; }
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Open Sans'; font-size:12pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;right&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2';&quot;&gt;T&lt;/span&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; vertical-align:sub;&quot;&gt;INSP&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;p align=&quot;right&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Peep&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
           <property name="overwriteMode">
            <bool>false</bool>
@@ -426,7 +499,7 @@ p, li { white-space: pre-wrap; }
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="TInspLabel">
+         <widget class="QLabel" name="PeepLabel">
           <property name="font">
            <font>
             <family>Open Sans</family>
@@ -448,115 +521,12 @@ p, li { white-space: pre-wrap; }
         </item>
         <item>
          <widget class="QTextBrowser" name="PeepText">
-          <property name="font">
-           <font>
-            <family>Open Sans</family>
-            <pointsize>12</pointsize>
-           </font>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
           </property>
-          <property name="styleSheet">
-           <string notr="true">Background-color: rgb(0, 105, 180)</string>
-          </property>
-          <property name="verticalScrollBarPolicy">
-           <enum>Qt::ScrollBarAlwaysOff</enum>
-          </property>
-          <property name="horizontalScrollBarPolicy">
-           <enum>Qt::ScrollBarAlwaysOff</enum>
-          </property>
-          <property name="undoRedoEnabled">
-           <bool>false</bool>
-          </property>
-          <property name="html">
-           <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Open Sans'; font-size:12pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;right&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2';&quot;&gt;Peep&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-          </property>
-          <property name="overwriteMode">
-           <bool>false</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="PeepLabel">
-          <property name="font">
-           <font>
-            <family>Open Sans</family>
-           </font>
-          </property>
-          <property name="text">
-           <string>---</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-          <property name="textInteractionFlags">
-           <set>Qt::LinksAccessibleByMouse|Qt::TextEditable</set>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QTextBrowser" name="RampText">
-          <property name="font">
-           <font>
-            <family>Open Sans</family>
-            <pointsize>12</pointsize>
-           </font>
-          </property>
-          <property name="styleSheet">
-           <string notr="true">Background-color: rgb(0, 105, 180)</string>
-          </property>
-          <property name="verticalScrollBarPolicy">
-           <enum>Qt::ScrollBarAlwaysOff</enum>
-          </property>
-          <property name="horizontalScrollBarPolicy">
-           <enum>Qt::ScrollBarAlwaysOff</enum>
-          </property>
-          <property name="undoRedoEnabled">
-           <bool>false</bool>
-          </property>
-          <property name="html">
-           <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Open Sans'; font-size:12pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;right&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2';&quot;&gt;Ramp&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-          </property>
-          <property name="overwriteMode">
-           <bool>false</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="RampLabel">
-          <property name="font">
-           <font>
-            <family>Open Sans</family>
-           </font>
-          </property>
-          <property name="layoutDirection">
-           <enum>Qt::LeftToRight</enum>
-          </property>
-          <property name="styleSheet">
-           <string notr="true"/>
-          </property>
-          <property name="text">
-           <string>---</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-          <property name="openExternalLinks">
-           <bool>false</bool>
-          </property>
-          <property name="textInteractionFlags">
-           <set>Qt::LinksAccessibleByMouse|Qt::TextEditable</set>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QTextBrowser" name="fText">
           <property name="font">
            <font>
             <family>Open Sans</family>
@@ -633,13 +603,13 @@ border: 1px solid black;}
       <attribute name="title">
        <string/>
       </attribute>
-      <widget class="QPushButton" name="StartButton_4">
+      <widget class="QPushButton" name="CancelMedSettingsButton">
        <property name="enabled">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
        <property name="geometry">
         <rect>
-         <x>280</x>
+         <x>350</x>
          <y>350</y>
          <width>171</width>
          <height>31</height>
@@ -649,13 +619,13 @@ border: 1px solid black;}
         <string>CANCEL</string>
        </property>
       </widget>
-      <widget class="QPushButton" name="StartButton_5">
+      <widget class="QPushButton" name="SetMedSettingsButton">
        <property name="enabled">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
        <property name="geometry">
         <rect>
-         <x>100</x>
+         <x>170</x>
          <y>350</y>
          <width>171</width>
          <height>31</height>
@@ -665,7 +635,7 @@ border: 1px solid black;}
         <string>SET</string>
        </property>
       </widget>
-      <widget class="QSlider" name="verticalSlider">
+      <widget class="QSlider" name="SliderTInspRise">
        <property name="geometry">
         <rect>
          <x>10</x>
@@ -691,6 +661,9 @@ border: 1px solid black;}
     height: 30px;
     margin: -0px -35px;
 }</string>
+       </property>
+       <property name="maximum">
+        <number>1000</number>
        </property>
        <property name="orientation">
         <enum>Qt::Vertical</enum>
@@ -728,7 +701,8 @@ border: 1px solid black;}
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Open Sans'; font-size:12pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;right&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;P&lt;span style=&quot; vertical-align:sub;&quot;&gt;INSP&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;p align=&quot;right&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;T&lt;span style=&quot; vertical-align:sub;&quot;&gt;Insp.-Rise&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;right&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; vertical-align:sub;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="overwriteMode">
         <bool>false</bool>
@@ -737,7 +711,7 @@ p, li { white-space: pre-wrap; }
       <widget class="QTextBrowser" name="fText_3">
        <property name="geometry">
         <rect>
-         <x>460</x>
+         <x>590</x>
          <y>300</y>
          <width>81</width>
          <height>21</height>
@@ -766,7 +740,8 @@ p, li { white-space: pre-wrap; }
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Open Sans'; font-size:12pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;right&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;f&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;p align=&quot;right&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;P&lt;span style=&quot; vertical-align:sub;&quot;&gt;Limit&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;right&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; vertical-align:sub;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="overwriteMode">
         <bool>false</bool>
@@ -804,7 +779,7 @@ p, li { white-space: pre-wrap; }
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Open Sans'; font-size:12pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;right&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2';&quot;&gt;T&lt;/span&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; vertical-align:sub;&quot;&gt;INSP&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;p align=&quot;right&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2';&quot;&gt;T&lt;/span&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; vertical-align:sub;&quot;&gt;Exp.-Fall&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="overwriteMode">
         <bool>false</bool>
@@ -842,7 +817,7 @@ p, li { white-space: pre-wrap; }
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Open Sans'; font-size:12pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;right&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;P&lt;span style=&quot; vertical-align:sub;&quot;&gt;Limit&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;p align=&quot;right&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;T&lt;span style=&quot; vertical-align:sub;&quot;&gt;Insp.-Hold&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="overwriteMode">
         <bool>false</bool>
@@ -880,7 +855,7 @@ p, li { white-space: pre-wrap; }
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Open Sans'; font-size:12pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;right&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2';&quot;&gt;Peep&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;p align=&quot;right&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2';&quot;&gt;T&lt;/span&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; vertical-align:sub;&quot;&gt;Exp.-Hold&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="overwriteMode">
         <bool>false</bool>
@@ -889,7 +864,7 @@ p, li { white-space: pre-wrap; }
       <widget class="QTextBrowser" name="RampText_3">
        <property name="geometry">
         <rect>
-         <x>370</x>
+         <x>500</x>
          <y>300</y>
          <width>81</width>
          <height>21</height>
@@ -918,13 +893,13 @@ p, li { white-space: pre-wrap; }
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Open Sans'; font-size:12pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;right&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2';&quot;&gt;Ramp&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;p align=&quot;right&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;PEEP&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="overwriteMode">
         <bool>false</bool>
        </property>
       </widget>
-      <widget class="QSlider" name="verticalSlider_2">
+      <widget class="QSlider" name="SliderTInspHold">
        <property name="geometry">
         <rect>
          <x>100</x>
@@ -951,11 +926,14 @@ p, li { white-space: pre-wrap; }
     margin: -0px -35px;
 }</string>
        </property>
+       <property name="maximum">
+        <number>3000</number>
+       </property>
        <property name="orientation">
         <enum>Qt::Vertical</enum>
        </property>
       </widget>
-      <widget class="QSlider" name="verticalSlider_3">
+      <widget class="QSlider" name="SliderTExpFall">
        <property name="geometry">
         <rect>
          <x>190</x>
@@ -982,11 +960,14 @@ p, li { white-space: pre-wrap; }
     margin: -0px -35px;
 }</string>
        </property>
+       <property name="maximum">
+        <number>3000</number>
+       </property>
        <property name="orientation">
         <enum>Qt::Vertical</enum>
        </property>
       </widget>
-      <widget class="QSlider" name="verticalSlider_4">
+      <widget class="QSlider" name="SliderTExpHold">
        <property name="geometry">
         <rect>
          <x>280</x>
@@ -1013,15 +994,18 @@ p, li { white-space: pre-wrap; }
     margin: -0px -35px;
 }</string>
        </property>
+       <property name="maximum">
+        <number>3000</number>
+       </property>
        <property name="orientation">
         <enum>Qt::Vertical</enum>
        </property>
       </widget>
-      <widget class="QSlider" name="verticalSlider_5">
+      <widget class="QSlider" name="SliderPEEP">
        <property name="geometry">
         <rect>
-         <x>370</x>
-         <y>10</y>
+         <x>500</x>
+         <y>20</y>
          <width>81</width>
          <height>281</height>
         </rect>
@@ -1044,15 +1028,18 @@ p, li { white-space: pre-wrap; }
     margin: -0px -35px;
 }</string>
        </property>
+       <property name="maximum">
+        <number>10000</number>
+       </property>
        <property name="orientation">
         <enum>Qt::Vertical</enum>
        </property>
       </widget>
-      <widget class="QSlider" name="verticalSlider_6">
+      <widget class="QSlider" name="SliderPLimit">
        <property name="geometry">
         <rect>
-         <x>460</x>
-         <y>10</y>
+         <x>590</x>
+         <y>20</y>
          <width>81</width>
          <height>281</height>
         </rect>
@@ -1075,11 +1062,14 @@ p, li { white-space: pre-wrap; }
     margin: -0px -35px;
 }</string>
        </property>
+       <property name="maximum">
+        <number>60000</number>
+       </property>
        <property name="orientation">
         <enum>Qt::Vertical</enum>
        </property>
       </widget>
-      <widget class="QLabel" name="RampLabel_2">
+      <widget class="QLabel" name="SetTInspRise">
        <property name="geometry">
         <rect>
          <x>10</x>
@@ -1109,7 +1099,7 @@ p, li { white-space: pre-wrap; }
         <set>Qt::LinksAccessibleByMouse|Qt::TextEditable</set>
        </property>
       </widget>
-      <widget class="QLabel" name="RampLabel_3">
+      <widget class="QLabel" name="SetTInspHold">
        <property name="geometry">
         <rect>
          <x>100</x>
@@ -1139,7 +1129,7 @@ p, li { white-space: pre-wrap; }
         <set>Qt::LinksAccessibleByMouse|Qt::TextEditable</set>
        </property>
       </widget>
-      <widget class="QLabel" name="RampLabel_4">
+      <widget class="QLabel" name="SetTExpFall">
        <property name="geometry">
         <rect>
          <x>190</x>
@@ -1169,7 +1159,7 @@ p, li { white-space: pre-wrap; }
         <set>Qt::LinksAccessibleByMouse|Qt::TextEditable</set>
        </property>
       </widget>
-      <widget class="QLabel" name="RampLabel_5">
+      <widget class="QLabel" name="SetTExpHold">
        <property name="geometry">
         <rect>
          <x>280</x>
@@ -1199,10 +1189,10 @@ p, li { white-space: pre-wrap; }
         <set>Qt::LinksAccessibleByMouse|Qt::TextEditable</set>
        </property>
       </widget>
-      <widget class="QLabel" name="RampLabel_6">
+      <widget class="QLabel" name="SetPeepLabel">
        <property name="geometry">
         <rect>
-         <x>370</x>
+         <x>500</x>
          <y>320</y>
          <width>81</width>
          <height>21</height>
@@ -1229,10 +1219,10 @@ p, li { white-space: pre-wrap; }
         <set>Qt::LinksAccessibleByMouse|Qt::TextEditable</set>
        </property>
       </widget>
-      <widget class="QLabel" name="RampLabel_7">
+      <widget class="QLabel" name="setPLimitLabel">
        <property name="geometry">
         <rect>
-         <x>460</x>
+         <x>590</x>
          <y>320</y>
          <width>81</width>
          <height>21</height>
@@ -1327,6 +1317,75 @@ p, li { white-space: pre-wrap; }
        </property>
        <property name="text">
         <string>NO MODULE</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="ResultingFreqLabel">
+       <property name="geometry">
+        <rect>
+         <x>370</x>
+         <y>320</y>
+         <width>81</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>Open Sans</family>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true"/>
+       </property>
+       <property name="text">
+        <string>---</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+       <property name="openExternalLinks">
+        <bool>false</bool>
+       </property>
+       <property name="textInteractionFlags">
+        <set>Qt::LinksAccessibleByMouse|Qt::TextEditable</set>
+       </property>
+      </widget>
+      <widget class="QTextBrowser" name="textBrowser">
+       <property name="geometry">
+        <rect>
+         <x>370</x>
+         <y>270</y>
+         <width>81</width>
+         <height>51</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>Open Sans</family>
+         <pointsize>12</pointsize>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">Background-color: rgb(0, 105, 180)</string>
+       </property>
+       <property name="verticalScrollBarPolicy">
+        <enum>Qt::ScrollBarAlwaysOff</enum>
+       </property>
+       <property name="horizontalScrollBarPolicy">
+        <enum>Qt::ScrollBarAlwaysOff</enum>
+       </property>
+       <property name="undoRedoEnabled">
+        <bool>false</bool>
+       </property>
+       <property name="html">
+        <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Open Sans'; font-size:12pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;right&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2';&quot;&gt;Resulting &lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;right&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2';&quot;&gt;frequency&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="overwriteMode">
+        <bool>false</bool>
        </property>
       </widget>
      </widget>

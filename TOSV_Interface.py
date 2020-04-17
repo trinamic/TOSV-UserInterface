@@ -5,8 +5,8 @@ Created on 14.04.2020
 @author: jh
 '''
 from PyTrinamic.connections.ConnectionManager import ConnectionManager
-from PyTrinamic.modules.TMCC_160 import TMCC_160
 import threading
+from modules.TMC4671_TMC6100_TOSV_REF import TMC4671_TMC6100_TOSV_REF
 
 #Interface class... Handles connection with the board via PyTrinamic
 #ToDo: detect when connection drops. 
@@ -41,51 +41,10 @@ class TOSV_Interface:
         return self.connected
     #set up Motor parameters, now in test setup with TMCC_160
     def setUpMotor(self):
-        self.module = TMCC_160(self.myInterface)
-        " motor/module settings "
-        self.module.setMotorPoles(4)
-        self.module.setMaxTorque(2000)
+        self.module = TMC4671_TMC6100_TOSV_REF(self.myInterface)
         self.module.showMotorConfiguration()
-        
-        " hall configuration "
-        self.module.setHallInvert(0)
-        self.module.showHallConfiguration()
-        
-        " encoder settings "
-        self.module.setOpenLoopTorque(1500)
-        self.module.setEncoderResolution(4096)
-        self.module.setEncoderDirection(0)
-        self.module.setEncoderInitMode(self.module.ENUMs.ENCODER_INIT_MODE_1)
-        self.module.showEncoderConfiguration()
-        
-        " motion settings "
-        self.module.setMaxVelocity(4000)
-        self.module.setAcceleration(2000)
-        self.module.setRampEnabled(1)
-        self.module.setTargetReachedVelocity(1000)
-        self.module.setTargetReachedDistance(5)
-        self.module.showMotionConfiguration()
-        
-        " current PID values "
-        self.module.setTorquePParameter(600)
-        self.module.setTorqueIParameter(600)
-        
-        " velocity PID values "
-        self.module.setVelocityPParameter(800)
-        self.module.setVelocityIParameter(500)
-        
-        " position PID values "
-        self.module.setPositionPParameter(300)
-        self.module.showPIConfiguration()
-        
-        " set commutation mode to FOC based on hall sensor signals "
-        self.module.setCommutationMode(self.module.ENUMs.COMM_MODE_FOC_ENCODER)
-        
-        " set position counter to zero"
-        self.module.setActualPosition(0)
-        
-        " move to zero position"
-        self.module.moveToPosition(0)
+
+        " motor/module settings "
         print("Motor set up done")
         self.connected = True
         return self.module
@@ -98,29 +57,105 @@ class TOSV_Interface:
         except: 
             print("closing connection failed... was a connection open?")
     #starts turning the motor, replace with start command for actual baord      
-    def startTest(self):
+    def startVentilation(self):
         try:
-            self.module.rotate(500)
+            self.module.setAxisParameter(self.module.APs.TOSVEnable, 1)
         except: 
             self.connected = False 
             print("Connection Error")
     #stops turning the motor, replace with start command for actual baord      
-    def stopTest(self):
+    def stopVentilation(self):
         try:
-            self.module.rotate(0)
+            self.module.setAxisParameter(self.module.APs.TOSVEnable, 0)
         except: 
             self.connected = False 
             print("Connection Error")
     #getValues from Board, replace with actual board values
-    def getActualVelocity(self):
+    def getActualPressure(self):
         try:
-            return self.module.actualVelocity()
+            return self.module.axisParameter(self.module.APs.ActualPressure)
         except: 
             self.connected = False 
             print("Connection Error")
-    def getTargetVelocity(self):
-        try: 
-            return self.module.targetReachedVelocity()
+    def getStatus(self):
+        try:
+            if self.module.axisParameter(self.module.APs.TOSVEnable) == 1:
+                return True
+            else:
+                return False
+        except: 
+            self.connected = False 
+            print("Connection Error")
+            
+    def setInhalationRiseTime(self,value):
+        try:
+            self.module.setAxisParameter(self.module.APs.TOSVInhalationRiseTime, value)
+        except: 
+            self.connected = False 
+            print("Connection Error")
+    def setInhalationPouseTime(self, value):
+        try:
+            self.module.setAxisParameter(self.module.APs.TOSVInhalationPouseTime, value)
+        except: 
+            self.connected = False 
+            print("Connection Error")
+    def setExhalationFallTime(self, value):
+        try:
+            self.module.setAxisParameter(self.module.APs.TOSVExhalationFallTime, value)
+        except: 
+            self.connected = False 
+            print("Connection Error")
+    def setExhalationPauseTime(self, value):
+        try:
+            self.module.setAxisParameter(self.module.APs.TOSVExhalationPauseTime, value)
+        except: 
+            self.connected = False 
+            print("Connection Error")
+    def setLIMITPresssure(self, value):
+        try:
+            self.module.setAxisParameter(self.module.APs.TOSVLIMITPresssure, value)
+        except: 
+            self.connected = False 
+            print("Connection Error")
+    def setPEEPPressure(self, value):
+        try:
+            self.module.setAxisParameter(self.module.APs.TOSVPEEPPressure, value)
+        except: 
+            self.connected = False 
+            print("Connection Error")
+    def getInhalationRiseTime(self):
+        try:
+            return self.module.axisParameter(self.module.APs.TOSVInhalationRiseTime)
+        except: 
+            self.connected = False 
+            print("Connection Error")
+    def getInhalationPouseTime(self):
+        try:
+            return self.module.axisParameter(self.module.APs.TOSVInhalationPouseTime)
+        except: 
+            self.connected = False 
+            print("Connection Error")
+    def getExhalationFallTime(self):
+        try:
+            return self.module.axisParameter(self.module.APs.TOSVExhalationFallTime)
+        except: 
+            self.connected = False 
+            print("Connection Error")
+    def getExhalationPauseTime(self):
+        try:
+            return self.module.axisParameter(self.module.APs.TOSVExhalationPauseTime)
+        except: 
+            self.connected = False 
+            print("Connection Error")
+    def getLIMITPresssure(self):
+        try:
+            return self.module.axisParameter(self.module.APs.TOSVLIMITPresssure)
+        except: 
+            self.connected = False 
+            print("Connection Error")
+    def getPEEPPressure(self):
+        try:
+            return self.module.axisParameter(self.module.APs.TOSVPEEPPressure)
         except: 
             self.connected = False 
             print("Connection Error")

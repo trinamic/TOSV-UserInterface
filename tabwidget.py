@@ -14,6 +14,7 @@ class TabBar(QtWidgets.QTabBar):
     def paintEvent(self, event):
         painter = QtWidgets.QStylePainter(self)
         opt = QtWidgets.QStyleOptionTab()
+        
         for i in range(self.count()):
             self.initStyleOption(opt, i)
             painter.drawControl(QtWidgets.QStyle.CE_TabBarTabShape, opt)
@@ -31,14 +32,13 @@ class TabBar(QtWidgets.QTabBar):
             painter.translate(-c)
             painter.drawControl(QtWidgets.QStyle.CE_TabBarTabLabel, opt);
             painter.restore()
-
-
+    
 class TabWidget(QtWidgets.QTabWidget):
     def __init__(self, *args, **kwargs):
         QtWidgets.QTabWidget.__init__(self, *args, **kwargs)
         self.setTabBar(TabBar(self))
         self.setTabPosition(QtWidgets.QTabWidget.West)
-    
+        
 
 class ProxyStyle(QtWidgets.QProxyStyle):
     def drawControl(self, element, opt, painter, widget):
