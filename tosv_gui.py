@@ -10,9 +10,8 @@ import sys
 import numpy
 import time
 
-from PyQt5 import QtWidgets, uic, QtCore, QtGui, Qt
+from PyQt5 import QtWidgets, uic, QtCore, QtGui
 import pyqtgraph as pg
-
 
 import matplotlib
 from TOSV_Interface import TOSV_Interface
@@ -31,17 +30,30 @@ class Ui(QtWidgets.QWidget):
         self.updatetime = 50        
                 
         #Define Varibles for VolumeGraph 
-        self.maxDataPoints = 12*60*60*(1000/self.updatetime)#For aprox. 12h of data record
-        #self.n_data = 50 
-        #self.x_data = numpy.array(range(self.n_data))
-        self.time_data = numpy.array([time.time()])
-        self.Volume_data = numpy.array([0])
-        self.Flow_data = numpy.array([0])
-        self.Pressure_data = numpy.array([0])
+        #self.maxDataPoints = 12*60*60*(1000/self.updatetime)#For aprox. 12h of data record
+        self.maxDataPoints = int(10*(1000/self.updatetime))
 
+        self.volumeData = list()
+        self.volumeTimeData = list()
         
-        #self.y_data = numpy.sin(self.x_data/5)
+        self.flowData = list()
+        self.flowTimeData = list()
         
+        self.pressureData = list()
+        self.pressureTimeData = list()
+
+        print("maxDataPoints: " + str(self.maxDataPoints))
+        
+        " init values "
+        for x in range(self.maxDataPoints):
+            initTime = time.time()- (self.maxDataPoints-(x+1))*50/1000;
+            self.volumeData.append(0)
+            self.volumeTimeData.append(initTime)
+            self.flowData.append(0)
+            self.flowTimeData.append(initTime)
+            self.pressureData.append(0)
+            self.pressureTimeData.append(initTime)
+                    
         self.running = False
         self.wasconnected = False
 
@@ -53,11 +65,13 @@ class Ui(QtWidgets.QWidget):
         self.DisconnectButton = self.findChild(QtWidgets.QPushButton, 'DisconnectButton')
         self.SetMedSettingsButton = self.findChild(QtWidgets.QPushButton, 'SetMedSettingsButton')
         self.CancelMedSettingsButton = self.findChild(QtWidgets.QPushButton, 'CancelMedSettingsButton')
+
         #Set up Buttons
         self.StopButton.hide()
         self.CancelButton.hide()
         self.DisconnectButton.hide()
         self.ConnectButton.hide()
+    
         #Define Button clicks    
         self.Start_Stop_Button.pressed.connect(self.start_Stop_Button_pressed)
         self.Start_Stop_Button.released.connect(self.start_Stop_Button_released)
@@ -106,8 +120,7 @@ class Ui(QtWidgets.QWidget):
         self.pen = pg.mkPen(color=(0, 0, 0))
         self.VolumeGraph.setBackground((20, 145, 204))
         self.VolumeGraph.showGrid(x=True, y=True)
-        self.VolumeGraph.plot(self.time_data, self.Volume_data,fillLevel=0, pen=self.pen ,brush=(255,255,255,255))
-        self.VolumeGraphxaxis  = self.VolumeGraph.getAxis('bottom')
+        self.VolumeGraphxaxis = self.VolumeGraph.getAxis('bottom')
         self.VolumeGraph.setXRange(-60,0)
          
         #Setting up FlowGraph
@@ -115,26 +128,26 @@ class Ui(QtWidgets.QWidget):
         self.pen = pg.mkPen(color=(0, 0, 0))
         self.FlowGraph.setBackground((20, 145, 204))
         self.FlowGraph.showGrid(x=True, y=True)
-        #self.FlowGraph.plot(self.x_data, self.y_data,fillLevel=0, pen=self.pen ,brush=(255,255,255,255))
-        self.FlowGraphxaxis  = self.FlowGraph.getAxis('bottom')
+        self.FlowGraphxaxis = self.FlowGraph.getAxis('bottom')
         
         #Setting up PressureGraph
         self.PressureGraph = self.findChild(pyqtgraph.PlotWidget, 'PressureGraph')
         self.pen = pg.mkPen(color=(0, 0, 0))
         self.PressureGraph.setBackground((20, 145, 204))
         self.PressureGraph.showGrid(x=True, y=True)
-        #self.FlowGraph.plot(self.x_data, self.y_data,fillLevel=0, pen=self.pen ,brush=(255,255,255,255))
-        self.PressureGraphxaxis  = self.FlowGraph.getAxis('bottom')
+        self.PressureGraphxaxis = self.PressureGraph.getAxis('bottom')
  
         #Define Timers
         #Timer for long button press
         self.timer_start_stop_button = QtCore.QTimer()
         self.timer_start_stop_button.setSingleShot(True)
         self.timer_start_stop_button.timeout.connect(self.confirm_stop)
+        
         #Timer for refreshing GUI
         self.timer_gui = QtCore.QTimer()
         self.timer_gui.timeout.connect(self.update_gui)
         self.timer_gui.start(self.updatetime)  # every 50 millisecon
+        
         #Timer for trying reconnect
         self.timer_reconnect = QtCore.QTimer()
         self.timer_reconnect.timeout.connect(self.reconnect)
@@ -155,21 +168,35 @@ class Ui(QtWidgets.QWidget):
         if self.Interface.getConnection() == True:
             self.SetMedSettingsButton.setEnabled(True);
             self.CancelMedSettingsButton.setEnabled(True);
-            #Update VolumeGraph
-            self.data = self.Interface.getActualPressure()
-            if self.data:
-                if self.Pressure_data.size < self.maxDataPoints:
-                    self.Pressure_data = numpy.append(self.Pressure_data , self.data)
-                    self.time_data = numpy.append(self.time_data , time.time())
-                else:
-                    self.Pressure_data = numpy.roll(self.Pressure_data,-1)
-                    self.time_data = numpy.roll(self.time_data,-1)
-                    self.y_data[self.Volume_data.size-1] = self.data1
-                    self.time_data[self.time_data.size-1] = time.time()
-            x_axis = numpy.subtract(self.time_data,time.time())
-            y_axix = self.Pressure_data
+            
+            # update pressure graph
+            pressure = self.Interface.getActualPressure()
+            if pressure:
+                self.pressureData.append(pressure)
+                self.pressureTimeData.append(time.time())
+
+                if len(self.pressureData) > self.maxDataPoints:
+                    self.pressureData.pop(0)
+                    self.pressureTimeData.pop(0)
+
+            x_axis = numpy.subtract(self.pressureTimeData, time.time())
+            y_axix = self.pressureData
             self.PressureGraph.plot(x_axis, y_axix, clear=True,fillLevel=0, pen=self.pen ,brush=(255,255,255,255))
             
+            # update flow graph
+            flow = self.Interface.getActualFlow()
+            if flow:
+                self.flowData.append(flow)
+                self.flowTimeData.append(time.time())
+            
+                if len(self.flowData) > self.maxDataPoints:
+                    self.flowData.pop(0)
+                    self.flowTimeData.pop(0)
+
+            x_axis = numpy.subtract(self.flowTimeData, time.time())
+            y_axix = self.flowData
+            self.FlowGraph.plot(x_axis, y_axix, clear=True,fillLevel=0, pen=self.pen ,brush=(255,255,255,255))
+
             #Setting            
             if self.running == True:
                 if self.timer_start_stop_button.isActive() == True:
@@ -247,6 +274,7 @@ class Ui(QtWidgets.QWidget):
         self.Start_Stop_Button.hide()
         self.StopButton.show()
         self.CancelButton.show()
+
     #stop button pressed
     def stop(self):
         self.running = False
@@ -254,11 +282,13 @@ class Ui(QtWidgets.QWidget):
         self.Start_Stop_Button.show()
         self.StopButton.hide()
         self.CancelButton.hide()
+
     #cancel button pressed
     def cancel(self):
         self.Start_Stop_Button.show()
         self.StopButton.hide()
-        self.CancelButton.hide()    
+        self.CancelButton.hide()  
+  
     #reconnect when no connection 
     #ToDo: try to detect lost connection
     def reconnect(self):
@@ -278,6 +308,7 @@ class Ui(QtWidgets.QWidget):
                 self.showNormal()
             else:
                 self.showFullScreen()
+
     #Function writes the setted MedSetting values on button press to module              
     def writeMedSettings(self):
         self.Interface.setInhalationRiseTime(self.TInspRiseSlider.value())
@@ -291,17 +322,14 @@ class Ui(QtWidgets.QWidget):
     def clearMedChanges(self):
         try:
             self.TInspRiseSlider.setValue(self.Interface.getInhalationRiseTime())
-            self.TInspHoldSlider.setValue(self.Interface.getInhalationPouseTime())
-            self.TInspRiseSlider.setValue(self.Interface.getInhalationRiseTime())
+            self.TInspHoldSlider.setValue(self.Interface.getInhalationPauseTime())
             self.TExpFallSlider.setValue(self.Interface.getExhalationFallTime())
             self.TExpHoldSlider.setValue(self.Interface.getExhalationPauseTime())
-            self.PLimitSlider.setValue(self.Interface.getLIMITPresssure())
-            self.PEEPSlider.setValue(self.Interface.getPEEPPressure())
+            self.PLimitSlider.setValue(self.Interface.getLimitPresssure())
+            self.PEEPSlider.setValue(self.Interface.getPeepPressure())
             print("Loading Settings from board")
         except:
             print("ERROR, Loading Settings from board")
-       
-         
                 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
