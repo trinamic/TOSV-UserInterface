@@ -8,15 +8,16 @@ from PyTrinamic.connections.ConnectionManager import ConnectionManager
 import threading
 from modules.TMC4671_TMC6100_TOSV_REF import TMC4671_TMC6100_TOSV_REF
 
+
 #Interface class... Handles connection with the board via PyTrinamic
 #ToDo: detect when connection drops. 
 class TOSV_Interface:
     def __init__(self):
 #         port = "COM20"#"/dev/ttyS0" #Change for different Interface type
-        port = "COM4"#"/dev/ttyS0" #Change for different Interface type
+        port = "COM20"#"/dev/ttyS0" #Change for different Interface type
         interface = "serial_tmcl"
         datarate = "115200"
-        arg= "--interface "+ interface +" --port "+ port + " --data-rate " + datarate
+        arg= f"--interface {interface} --port {port} --data-rate {datarate}" 
         print(arg)
         self.connectionManager = ConnectionManager(arg.split())
         self.connected = True 
@@ -39,7 +40,7 @@ class TOSV_Interface:
             print("could not connect, interface")
     
     #returns if board is connected
-    def getConnection(self):
+    def isConnected(self):
         return self.connected
 
     #set up Motor parameters, now in test setup with TMCC_160
@@ -92,7 +93,7 @@ class TOSV_Interface:
     def getActualFlow(self):
         try:
             # todo: update with real flow value
-            return self.module.axisParameter(self.module.APs.ActualVelocity)
+            return -self.module.actualVelocity()
         except: 
             self.connected = False 
             print("Connection Error: getActualFlow")

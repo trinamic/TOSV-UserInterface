@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Form</class>
- <widget class="QWidget" name="Form">
+ <class>TOSV_UserInterface</class>
+ <widget class="QWidget" name="TOSV_UserInterface">
   <property name="enabled">
    <bool>true</bool>
   </property>
@@ -28,8 +28,9 @@
    <string>Form</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">#Form{
-background-color:rgb(20, 145, 204);
+   <string notr="true">#TOSV_UserInterface{
+background-color:#0069B4;
+color: white;
 }</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
@@ -64,7 +65,7 @@ QTabWidget::tab-bar {
 left: 0px; /* move to the right by 5px */
 }
 QTabWidget QTabBar::tab {
-border: 1px solid rgb(0, 0, 0);
+border: 1px solid black;
 border-top-left-radius: 4px;
 border-top-right-radius: 4px;
 padding: 2px;
@@ -72,8 +73,8 @@ padding-top: 0px;
 padding-bottom: -14px
 }
 QTabBar::tab:selected {
-border-color: rgb(0, 0, 0);
-background: rgb(20, 145, 204);
+border-color: black;
+background: #001C42;
 }
 QTabBar::tab:!selected {
 /*margin-top: 2px;  make non-selected tabs look smaller */
@@ -118,8 +119,10 @@ background: rgb(0, 105, 180);
       </property>
       <property name="styleSheet">
        <string notr="true">border-radius: 3px;
-Background-color: #1491CC;
+Background-color:#0069B4;
 border: 1px solid black;
+color: white;
+
 
 /*QLabel{ border-radius: 3px;
 Background-color: #1491CC;
@@ -153,9 +156,15 @@ border: 1px solid black;}
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>51</width>
+          <width>71</width>
           <height>16</height>
          </rect>
+        </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
         </property>
         <property name="text">
          <string>Volume</string>
@@ -182,12 +191,18 @@ border: 1px solid black;}
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>51</width>
+          <width>71</width>
           <height>16</height>
          </rect>
         </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="text">
-         <string>Flow</string>
+         <string>(RPM)</string>
         </property>
        </widget>
       </widget>
@@ -205,9 +220,15 @@ border: 1px solid black;}
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>51</width>
+          <width>71</width>
           <height>16</height>
          </rect>
+        </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
         </property>
         <property name="text">
          <string>Pressure</string>
@@ -220,7 +241,7 @@ border: 1px solid black;}
          <x>610</x>
          <y>10</y>
          <width>73</width>
-         <height>441</height>
+         <height>451</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -587,12 +608,14 @@ p, li { white-space: pre-wrap; }
       </property>
       <property name="styleSheet">
        <string notr="true">border-radius: 3px;
-Background-color: #1491CC;
+Background-color:#0069B4;
 border: 1px solid black;
+color: white;
+
 
 /*QLabel{ border-radius: 3px;
 Background-color: #1491CC;
-border: 1px solid black;}
+border: 1px solid black;}*/
 
 </string>
       </property>
@@ -656,7 +679,7 @@ border: 1px solid black;}
 }
 
 .QSlider::handle:vertical {
-    background: rgb(0, 105, 180);
+    background:#afb3b6 ;
     border: 1px solid rgb(0, 0, 0);
     height: 30px;
     margin: -0px -35px;
@@ -920,7 +943,7 @@ p, li { white-space: pre-wrap; }
 }
 
 .QSlider::handle:vertical {
-    background: rgb(0, 105, 180);
+    background:#afb3b6 ;
     border: 1px solid rgb(0, 0, 0);
     height: 30px;
     margin: -0px -35px;
@@ -954,7 +977,7 @@ p, li { white-space: pre-wrap; }
 }
 
 .QSlider::handle:vertical {
-    background: rgb(0, 105, 180);
+    background:#afb3b6 ;
     border: 1px solid rgb(0, 0, 0);
     height: 30px;
     margin: -0px -35px;
@@ -988,7 +1011,7 @@ p, li { white-space: pre-wrap; }
 }
 
 .QSlider::handle:vertical {
-    background: rgb(0, 105, 180);
+    background:#afb3b6 ;
     border: 1px solid rgb(0, 0, 0);
     height: 30px;
     margin: -0px -35px;
@@ -1022,14 +1045,14 @@ p, li { white-space: pre-wrap; }
 }
 
 .QSlider::handle:vertical {
-    background: rgb(0, 105, 180);
+    background:#afb3b6 ;
     border: 1px solid rgb(0, 0, 0);
     height: 30px;
     margin: -0px -35px;
 }</string>
        </property>
        <property name="maximum">
-        <number>10000</number>
+        <number>1000</number>
        </property>
        <property name="orientation">
         <enum>Qt::Vertical</enum>
@@ -1056,14 +1079,14 @@ p, li { white-space: pre-wrap; }
 }
 
 .QSlider::handle:vertical {
-    background: rgb(0, 105, 180);
+    background:#afb3b6 ;
     border: 1px solid rgb(0, 0, 0);
     height: 30px;
     margin: -0px -35px;
 }</string>
        </property>
        <property name="maximum">
-        <number>60000</number>
+        <number>6000</number>
        </property>
        <property name="orientation">
         <enum>Qt::Vertical</enum>
@@ -1081,6 +1104,7 @@ p, li { white-space: pre-wrap; }
        <property name="font">
         <font>
          <family>Open Sans</family>
+         <pointsize>8</pointsize>
         </font>
        </property>
        <property name="styleSheet">
@@ -1111,6 +1135,7 @@ p, li { white-space: pre-wrap; }
        <property name="font">
         <font>
          <family>Open Sans</family>
+         <pointsize>8</pointsize>
         </font>
        </property>
        <property name="styleSheet">
@@ -1141,6 +1166,7 @@ p, li { white-space: pre-wrap; }
        <property name="font">
         <font>
          <family>Open Sans</family>
+         <pointsize>8</pointsize>
         </font>
        </property>
        <property name="styleSheet">
@@ -1171,6 +1197,7 @@ p, li { white-space: pre-wrap; }
        <property name="font">
         <font>
          <family>Open Sans</family>
+         <pointsize>8</pointsize>
         </font>
        </property>
        <property name="styleSheet">
@@ -1201,6 +1228,7 @@ p, li { white-space: pre-wrap; }
        <property name="font">
         <font>
          <family>Open Sans</family>
+         <pointsize>8</pointsize>
         </font>
        </property>
        <property name="styleSheet">
@@ -1231,6 +1259,7 @@ p, li { white-space: pre-wrap; }
        <property name="font">
         <font>
          <family>Open Sans</family>
+         <pointsize>8</pointsize>
         </font>
        </property>
        <property name="styleSheet">
@@ -1324,13 +1353,14 @@ p, li { white-space: pre-wrap; }
         <rect>
          <x>370</x>
          <y>320</y>
-         <width>81</width>
+         <width>91</width>
          <height>21</height>
         </rect>
        </property>
        <property name="font">
         <font>
          <family>Open Sans</family>
+         <pointsize>8</pointsize>
         </font>
        </property>
        <property name="styleSheet">
@@ -1354,7 +1384,7 @@ p, li { white-space: pre-wrap; }
         <rect>
          <x>370</x>
          <y>270</y>
-         <width>81</width>
+         <width>91</width>
          <height>51</height>
         </rect>
        </property>
@@ -1381,8 +1411,8 @@ p, li { white-space: pre-wrap; }
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Open Sans'; font-size:12pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;right&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2';&quot;&gt;Resulting &lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;right&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2';&quot;&gt;frequency&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;p align=&quot;right&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:11pt;&quot;&gt;Resulting &lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;right&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:11pt;&quot;&gt;frequency&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="overwriteMode">
         <bool>false</bool>

@@ -11,11 +11,10 @@ import numpy
 import time
 
 from PyQt5 import QtWidgets, uic, QtCore, QtGui
-import pyqtgraph as pg
+import pyqtgraph 
 
 import matplotlib
 from TOSV_Interface import TOSV_Interface
-import pyqtgraph
 
 matplotlib.use('Qt5Agg')
 
@@ -44,9 +43,9 @@ class Ui(QtWidgets.QWidget):
 
         print("maxDataPoints: " + str(self.maxDataPoints))
         
-        " init values "
+        #init values
         for x in range(self.maxDataPoints):
-            initTime = time.time()- (self.maxDataPoints-(x+1))*50/1000;
+            initTime = time.time()- (self.maxDataPoints-(x+1))*50/1000
             self.volumeData.append(0)
             self.volumeTimeData.append(initTime)
             self.flowData.append(0)
@@ -113,27 +112,24 @@ class Ui(QtWidgets.QWidget):
         self.LabelSetPLimit = self.findChild(QtWidgets.QLabel, 'setPLimitLabel')
         self.LabelResultFreq = self.findChild(QtWidgets.QLabel, 'ResultingFreqLabel')
     
-        
         #Setting up Graphs
         #Setting up VolumeGraph
         self.VolumeGraph = self.findChild(pyqtgraph.PlotWidget,'VolumeGraph')
-        self.pen = pg.mkPen(color=(0, 0, 0))
-        self.VolumeGraph.setBackground((20, 145, 204))
+        self.pen = pyqtgraph.mkPen(color=(0, 0, 0))
+        self.VolumeGraph.setBackground(('#0069b4'))
         self.VolumeGraph.showGrid(x=True, y=True)
         self.VolumeGraphxaxis = self.VolumeGraph.getAxis('bottom')
         self.VolumeGraph.setXRange(-60,0)
          
         #Setting up FlowGraph
         self.FlowGraph = self.findChild(pyqtgraph.PlotWidget, 'FlowGraph')
-        self.pen = pg.mkPen(color=(0, 0, 0))
-        self.FlowGraph.setBackground((20, 145, 204))
+        self.FlowGraph.setBackground(('#0069b4'))
         self.FlowGraph.showGrid(x=True, y=True)
         self.FlowGraphxaxis = self.FlowGraph.getAxis('bottom')
         
         #Setting up PressureGraph
         self.PressureGraph = self.findChild(pyqtgraph.PlotWidget, 'PressureGraph')
-        self.pen = pg.mkPen(color=(0, 0, 0))
-        self.PressureGraph.setBackground((20, 145, 204))
+        self.PressureGraph.setBackground(('#0069b4'))
         self.PressureGraph.showGrid(x=True, y=True)
         self.PressureGraphxaxis = self.PressureGraph.getAxis('bottom')
  
@@ -154,8 +150,8 @@ class Ui(QtWidgets.QWidget):
         self.timer_reconnect.start(1000) #Dont set to low.. otherwise the connection will fail
         
         #Show Window, depending on Fullscreen setting. 
-        global fullscreen
-        if fullscreen == True:
+        self.setWindowTitle('TOSV UserInterface')
+        if fullscreen:
             self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
             self.showFullScreen()
             #self.setCursor(QtCore.Qt.BlankCursor)
@@ -165,13 +161,14 @@ class Ui(QtWidgets.QWidget):
     #Updating the GUI periodically, called by timer. 
     #ToDo: Cleanup 
     def update_gui(self):
-        if self.Interface.getConnection() == True:
-            self.SetMedSettingsButton.setEnabled(True);
-            self.CancelMedSettingsButton.setEnabled(True);
+        if self.Interface.isConnected() == True:
+            self.SetMedSettingsButton.setEnabled(True)
+            self.CancelMedSettingsButton.setEnabled(True)
             
             # update pressure graph
             pressure = self.Interface.getActualPressure()
             if pressure:
+                pressure = pressure/100
                 self.pressureData.append(pressure)
                 self.pressureTimeData.append(time.time())
 
@@ -180,12 +177,13 @@ class Ui(QtWidgets.QWidget):
                     self.pressureTimeData.pop(0)
 
             x_axis = numpy.subtract(self.pressureTimeData, time.time())
-            y_axix = self.pressureData
-            self.PressureGraph.plot(x_axis, y_axix, clear=True,fillLevel=0, pen=self.pen ,brush=(255,255,255,255))
+            y_axis = self.pressureData
+            self.LabelPMax.setText(str(max(y_axis))+"mbar")
+            self.PressureGraph.plot(x_axis, y_axis, clear=True,fillLevel=0, pen=self.pen ,brush=(255,255,255,255))
             
             # update flow graph
             flow = self.Interface.getActualFlow()
-            if flow:
+            if flow != None:
                 self.flowData.append(flow)
                 self.flowTimeData.append(time.time())
             
@@ -213,9 +211,9 @@ class Ui(QtWidgets.QWidget):
             #self.LabelCurrRPM.setText("-")
             #self.LabelTarRPM.setText("-")
             self.Start_Stop_Button.setText("NO MODULE")
-            self.SetMedSettingsButton.setEnabled(False);
-            self.CancelMedSettingsButton.setEnabled(False);
-            self.Start_Stop_Button.setStyleSheet("background-color : rgb(255, 255, 0)")  
+            self.SetMedSettingsButton.setEnabled(False)
+            self.CancelMedSettingsButton.setEnabled(False)
+            self.Start_Stop_Button.setStyleSheet("background-color : #f7751f ")  
     
         #Update Values under slieder
         self.LabelSetTInspRise.setText(str(self.TInspRiseSlider.value()/1000)+"s")
@@ -227,8 +225,10 @@ class Ui(QtWidgets.QWidget):
         self.LabelSetPLimit.setText(str(self.PLimitSlider.value()/100)+"mbar")
         CycleTime = self.TInspRiseSlider.value()+self.TInspHoldSlider.value()+self.TExpFallSlider.value()+self.TExpHoldSlider.value()
         if CycleTime != 0:
-            CycleFreq = 60000/CycleTime
-            self.LabelResultFreq.setText(str("{:.2f}".format(CycleFreq))+" /min")
+            self.CycleFreq = 60000/CycleTime
+            self.LabelResultFreq.setText(str("{:.2f}".format(self.CycleFreq))+" /min")
+            self.Labelfreq.setText(str("{:.2f}".format(self.CycleFreq))+" /min")
+
         else: 
             self.LabelResultFreq.setText("--")
 
@@ -238,19 +238,16 @@ class Ui(QtWidgets.QWidget):
     #Paint Trinamic logo
     def paintEvent(self, event):
         painter = QtGui.QPainter(self)
-        xcor = 689
-        ycor = 395
-        xsize = 125
-        ysize = 110/170*xsize
-        painter.drawImage(QtCore.QRectF(xcor, ycor ,xsize, ysize), QtGui.QImage('resources/trinamic_logo.svg'))
-        painter.setPen(QtGui.QColor(0,0,0))
-        painter.setFont(QtGui.QFont('OpenSans', 10))
-        painter.drawText(QtCore.QRectF(xcor, ycor+ysize, ysize, ysize), QtCore.Qt.AlignCenter, "TOSV")
+        xcor = 710
+        ycor = 360
+        xsize = 75
+        ysize = 350/250*xsize
+        painter.drawImage(QtCore.QRectF(xcor, ycor ,xsize, ysize), QtGui.QImage('resources/logos.svg'))
         painter.save()
     
     def start_Stop_Button_pressed(self):
         print("running") 
-        if self.Interface.getConnection() == True:
+        if self.Interface.isConnected() == True:
             if self.running == False:
                 print("startTest") 
                 self.Interface.startVentilation()
@@ -292,7 +289,7 @@ class Ui(QtWidgets.QWidget):
     #reconnect when no connection 
     #ToDo: try to detect lost connection
     def reconnect(self):
-        if self.Interface.getConnection() == False:
+        if self.Interface.isConnected() == False:
             self.Interface.connect()
             self.wasconnected = False
         else: 
@@ -312,24 +309,29 @@ class Ui(QtWidgets.QWidget):
     #Function writes the setted MedSetting values on button press to module              
     def writeMedSettings(self):
         self.Interface.setInhalationRiseTime(self.TInspRiseSlider.value())
-        self.Interface.setInhalationPouseTime(self.TInspHoldSlider.value())
+        self.Interface.setInhalationPauseTime(self.TInspHoldSlider.value())
         self.Interface.setExhalationFallTime(self.TExpFallSlider.value())
         self.Interface.setExhalationPauseTime(self.TExpHoldSlider.value())
-        self.Interface.setLIMITPresssure(self.PLimitSlider.value())
-        self.Interface.setPEEPPressure(self.PEEPSlider.value())
-        return 
+        self.Interface.setLimitPresssure(self.PLimitSlider.value())
+        self.Interface.setPeepPressure(self.PEEPSlider.value())
+        #Values on Overviewpage
+        self.LabelPEEP.setText(str(self.Interface.getPeepPressure()/100)+"mbar")
+        self.LabelPLimit.setText(str(self.Interface.getLimitPresssure()/100)+"mbar")
+
     #Function setts the slieders in MedSettings back to values set in module 
     def clearMedChanges(self):
-        try:
-            self.TInspRiseSlider.setValue(self.Interface.getInhalationRiseTime())
-            self.TInspHoldSlider.setValue(self.Interface.getInhalationPauseTime())
-            self.TExpFallSlider.setValue(self.Interface.getExhalationFallTime())
-            self.TExpHoldSlider.setValue(self.Interface.getExhalationPauseTime())
-            self.PLimitSlider.setValue(self.Interface.getLimitPresssure())
-            self.PEEPSlider.setValue(self.Interface.getPeepPressure())
-            print("Loading Settings from board")
-        except:
-            print("ERROR, Loading Settings from board")
+        self.TInspRiseSlider.setValue(self.Interface.getInhalationRiseTime())
+        self.TInspHoldSlider.setValue(self.Interface.getInhalationPauseTime())
+        self.TExpFallSlider.setValue(self.Interface.getExhalationFallTime())
+        self.TExpHoldSlider.setValue(self.Interface.getExhalationPauseTime())
+        self.PLimitSlider.setValue(self.Interface.getLimitPresssure())
+        self.PEEPSlider.setValue(self.Interface.getPeepPressure())
+        #Set Labels  on overview page
+        self.LabelPEEP.setText(str(self.Interface.getPeepPressure()/100)+"mbar")
+        self.LabelPLimit.setText(str(self.Interface.getLimitPresssure()/100)+"mbar")
+
+        print("Loaded Settings from board")
+    
                 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)

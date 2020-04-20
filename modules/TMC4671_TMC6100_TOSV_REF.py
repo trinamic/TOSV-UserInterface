@@ -3,6 +3,8 @@ Created on 09.04.2020
 
 @author: ED
 '''
+from PyTrinamic.helpers import TMC_helpers
+
 
 class TMC4671_TMC6100_TOSV_REF(object):
 
@@ -36,8 +38,7 @@ class TMC4671_TMC6100_TOSV_REF(object):
 
     def actualVelocity(self):
         reg_value = self.axisParameter(self.APs.ActualVelocity)
-        return twos_comp(reg_value, 32)
-        #return TMC_helpers.toSigned32(reg_value) better use this? (ED) 
+        return TMC_helpers.toSigned32(reg_value)# better use this? (ED) 
 
     def showMotorConfiguration(self):
         print("Motor configuration:")
