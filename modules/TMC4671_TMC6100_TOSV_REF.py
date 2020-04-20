@@ -5,7 +5,6 @@ Created on 09.04.2020
 '''
 from PyTrinamic.helpers import TMC_helpers
 
-
 class TMC4671_TMC6100_TOSV_REF(object):
 
     def __init__(self, connection):
@@ -56,7 +55,6 @@ class TMC4671_TMC6100_TOSV_REF(object):
         print("Motion configuration:")
         print("\tMax velocity: " + str(self.axisParameter(self.APs.MaxVelocity)))
         print("\tAcceleration: " + str(self.axisParameter(self.APs.Acceleration)))
-        print("\tDeceleration: " + str(self.axisParameter(self.APs.Deceleration)))
         print("\tRamp enabled: " + ("disabled" if (self.axisParameter(self.APs.EnableVelocityRamp)==0) else "enabled"))
 
     def showPIConfiguration(self):
@@ -188,13 +186,3 @@ class _GPs():
     SerialBaudRate          = 65
     SerialModuleAddress     = 66
     SerialHostAddress       = 76
-
-
-def twos_comp(val, bits):
-    """computes the 2's complement of an int value
-
-    taken from: https://stackoverflow.com/questions/1604464/twos-complement-in-python
-    """
-    if (val & (1 << (bits - 1))) != 0:  # if sign bit is set e.g., 8bit: 128-255
-        val = val - (1 << bits)         # compute negative value
-    return val                          # return positive value as is

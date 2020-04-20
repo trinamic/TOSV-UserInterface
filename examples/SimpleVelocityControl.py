@@ -11,7 +11,8 @@ from PyTrinamic.connections.ConnectionManager import ConnectionManager
 from modules.TMC4671_TMC6100_TOSV_REF import TMC4671_TMC6100_TOSV_REF
 import time
 
-connectionManager = ConnectionManager("--interface serial_tmcl --port COM20 --data-rate 115200".split())
+# connectionManager = ConnectionManager("--interface serial_tmcl --port COM20 --data-rate 115200".split())
+connectionManager = ConnectionManager("--interface serial_tmcl --port COM4 --data-rate 115200".split())
 myInterface = connectionManager.connect()
 
 module = TMC4671_TMC6100_TOSV_REF(myInterface)

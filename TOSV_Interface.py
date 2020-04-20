@@ -13,7 +13,7 @@ from modules.TMC4671_TMC6100_TOSV_REF import TMC4671_TMC6100_TOSV_REF
 #ToDo: detect when connection drops. 
 class TOSV_Interface:
     def __init__(self):
-#         port = "COM20"#"/dev/ttyS0" #Change for different Interface type
+#        port = "COM4"#"/dev/ttyS0" #Change for different Interface type
         port = "COM20"#"/dev/ttyS0" #Change for different Interface type
         interface = "serial_tmcl"
         datarate = "115200"
