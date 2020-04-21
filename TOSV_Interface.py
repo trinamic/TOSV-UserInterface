@@ -14,7 +14,7 @@ from modules.TMC4671_TMC6100_TOSV_REF import TMC4671_TMC6100_TOSV_REF
 class TOSV_Interface:
     def __init__(self):
 #        port = "COM4"#"/dev/ttyS0" #Change for different Interface type
-        port = "COM20"#"/dev/ttyS0" #Change for different Interface type
+        port = "/dev/ttyS0" #Change for different Interface type
         interface = "serial_tmcl"
         datarate = "115200"
         arg= f"--interface {interface} --port {port} --data-rate {datarate}" 
@@ -50,6 +50,8 @@ class TOSV_Interface:
         self.module.showPIConfiguration()
         self.module.showSelectedCommutationFeedback()
         self.module.showTosvConfiguration()
+        self.module.setAxisParameter(self.module.APs.PressureP, 3000)
+        self.module.setAxisParameter(self.module.APs.PressureI, 2500)
 
         " motor/module settings "
         print("Motor set up done")

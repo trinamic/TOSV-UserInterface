@@ -168,7 +168,7 @@ class Ui(QtWidgets.QWidget):
             # update pressure graph
             pressure = self.Interface.getActualPressure()
             if pressure:
-                pressure = pressure/100
+                pressure = pressure/1000
                 self.pressureData.append(pressure)
                 self.pressureTimeData.append(time.time())
 
@@ -221,8 +221,8 @@ class Ui(QtWidgets.QWidget):
         self.LabelSetTExpFall.setText(str(self.TExpFallSlider.value()/1000)+"s")
         self.LabelSetTExpHold.setText(str(self.TExpHoldSlider.value()/1000)+"s")
         
-        self.LabelSetPEEP.setText(str(self.PEEPSlider.value()/100)+"mbar")
-        self.LabelSetPLimit.setText(str(self.PLimitSlider.value()/100)+"mbar")
+        self.LabelSetPEEP.setText(str(self.PEEPSlider.value()/1000)+"mbar")
+        self.LabelSetPLimit.setText(str(self.PLimitSlider.value()/1000)+"mbar")
         CycleTime = self.TInspRiseSlider.value()+self.TInspHoldSlider.value()+self.TExpFallSlider.value()+self.TExpHoldSlider.value()
         if CycleTime != 0:
             self.CycleFreq = 60000/CycleTime
@@ -238,10 +238,17 @@ class Ui(QtWidgets.QWidget):
     #Paint Trinamic logo
     def paintEvent(self, event):
         painter = QtGui.QPainter(self)
-        xcor = 710
-        ycor = 360
+        windowWidth = self.width()
+        windowheigt = self.height()
+    
         xsize = 75
         ysize = 350/250*xsize
+        
+        xpadding = 3
+        ypadding = 3
+        
+        xcor = windowWidth-xsize-xpadding
+        ycor = windowheigt-ysize-ypadding
         painter.drawImage(QtCore.QRectF(xcor, ycor ,xsize, ysize), QtGui.QImage('resources/logos.svg'))
         painter.save()
     
@@ -315,8 +322,8 @@ class Ui(QtWidgets.QWidget):
         self.Interface.setLimitPresssure(self.PLimitSlider.value())
         self.Interface.setPeepPressure(self.PEEPSlider.value())
         #Values on Overviewpage
-        self.LabelPEEP.setText(str(self.Interface.getPeepPressure()/100)+"mbar")
-        self.LabelPLimit.setText(str(self.Interface.getLimitPresssure()/100)+"mbar")
+        self.LabelPEEP.setText(str(self.Interface.getPeepPressure()/1000)+"mbar")
+        self.LabelPLimit.setText(str(self.Interface.getLimitPresssure()/1000)+"mbar")
 
     #Function setts the slieders in MedSettings back to values set in module 
     def clearMedChanges(self):
@@ -327,8 +334,8 @@ class Ui(QtWidgets.QWidget):
         self.PLimitSlider.setValue(self.Interface.getLimitPresssure())
         self.PEEPSlider.setValue(self.Interface.getPeepPressure())
         #Set Labels  on overview page
-        self.LabelPEEP.setText(str(self.Interface.getPeepPressure()/100)+"mbar")
-        self.LabelPLimit.setText(str(self.Interface.getLimitPresssure()/100)+"mbar")
+        self.LabelPEEP.setText(str(self.Interface.getPeepPressure()/1000)+"mbar")
+        self.LabelPLimit.setText(str(self.Interface.getLimitPresssure()/1000)+"mbar")
 
         print("Loaded Settings from board")
     
