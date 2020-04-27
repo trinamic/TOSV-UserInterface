@@ -13,8 +13,8 @@ from modules.TMC4671_TMC6100_TOSV_REF import TMC4671_TMC6100_TOSV_REF
 #ToDo: detect when connection drops. 
 class TOSV_Interface:
     def __init__(self):
-#        port = "COM4"#"/dev/ttyS0" #Change for different Interface type
-        port = "/dev/ttyS0" #Change for different Interface type
+        port = "COM20"#"/dev/ttyS0" #Change for different Interface type
+        #port = "/dev/ttyS0" #Change for different Interface type
         interface = "serial_tmcl"
         datarate = "115200"
         arg= f"--interface {interface} --port {port} --data-rate {datarate}" 
@@ -95,10 +95,17 @@ class TOSV_Interface:
     def getActualFlow(self):
         try:
             # todo: update with real flow value
-            return -self.module.actualVelocity()
+            return self.module.actualFlow()
         except: 
             self.connected = False 
             print("Connection Error: getActualFlow")
+    def getActualVolume(self):
+        try:
+            # todo: update with real flow value
+            return self.module.actualVolume()
+        except: 
+            self.connected = False 
+            print("Connection Error: getActualVolume")
             
     def getStatus(self):
         try:
@@ -190,6 +197,13 @@ class TOSV_Interface:
     def getPeepPressure(self):
         try:
             return self.module.axisParameter(self.module.APs.TosvPeepPressure)
+        except: 
+            self.connected = False 
+            print("Connection Error: getPeepPressure")
+    def NullFlowSensor(self):
+        try:
+            return
+            #return self.module.axisParameter(self.module.APs.TosvPeepPressure)
         except: 
             self.connected = False 
             print("Connection Error: getPeepPressure")

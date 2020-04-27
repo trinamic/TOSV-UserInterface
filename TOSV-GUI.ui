@@ -237,7 +237,7 @@ border: 1px solid black;}
              </sizepolicy>
             </property>
             <property name="text">
-             <string>(RPM)</string>
+             <string>Flow</string>
             </property>
            </widget>
           </widget>
@@ -1296,6 +1296,18 @@ border: 1px solid black;}*/
             </size>
            </property>
           </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="NullFlowsensorButton">
+           <property name="font">
+            <font>
+             <pointsize>18</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>Null Flowsensor</string>
+           </property>
+          </widget>
          </item>
          <item>
           <widget class="QPushButton" name="ConnectButton">

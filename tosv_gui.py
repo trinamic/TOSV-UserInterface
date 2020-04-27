@@ -13,10 +13,7 @@ import time
 from PyQt5 import QtWidgets, uic, QtCore, QtGui
 import pyqtgraph 
 
-import matplotlib
 from TOSV_Interface import TOSV_Interface
-
-matplotlib.use('Qt5Agg')
 
 #Set to True in for fullscreen 
 fullscreen = False 
@@ -64,6 +61,7 @@ class Ui(QtWidgets.QWidget):
         self.DisconnectButton = self.findChild(QtWidgets.QPushButton, 'DisconnectButton')
         self.SetMedSettingsButton = self.findChild(QtWidgets.QPushButton, 'SetMedSettingsButton')
         self.CancelMedSettingsButton = self.findChild(QtWidgets.QPushButton, 'CancelMedSettingsButton')
+        self.NullFlowsensorButton = self.findChild(QtWidgets.QPushButton, 'NullFlowsensorButton')
 
         #Set up Buttons
         self.StopButton.hide()
@@ -81,6 +79,8 @@ class Ui(QtWidgets.QWidget):
         self.SetMedSettingsButton.clicked.connect(self.writeMedSettings)
         self.CancelMedSettingsButton.clicked.connect(self.clearMedChanges)
         
+        self.NullFlowsensorButton.clicked.connect(self.NullFlowSensor)
+        
         #Buttons are disabled
         #self.ConnectButton.clicked.connect(self.Interface.connect)
         #self.DisconnectButton.clicked.connect(self.Interface.disconnect)
@@ -92,8 +92,7 @@ class Ui(QtWidgets.QWidget):
         
         self.PEEPSlider = self.findChild(QtWidgets.QSlider, 'SliderPEEP')
         self.PLimitSlider = self.findChild(QtWidgets.QSlider, 'SliderPLimit')
-
-    
+            
         #Define Labels
         #Labels in Overview
         self.LabelVolume = self.findChild(QtWidgets.QLabel, 'VolumeLabel')
@@ -114,12 +113,12 @@ class Ui(QtWidgets.QWidget):
     
         #Setting up Graphs
         #Setting up VolumeGraph
-        self.VolumeGraph = self.findChild(pyqtgraph.PlotWidget,'VolumeGraph')
         self.pen = pyqtgraph.mkPen(color=(0, 0, 0))
+
+        self.VolumeGraph = self.findChild(pyqtgraph.PlotWidget,'VolumeGraph')
         self.VolumeGraph.setBackground(('#0069b4'))
         self.VolumeGraph.showGrid(x=True, y=True)
         self.VolumeGraphxaxis = self.VolumeGraph.getAxis('bottom')
-        self.VolumeGraph.setXRange(-60,0)
          
         #Setting up FlowGraph
         self.FlowGraph = self.findChild(pyqtgraph.PlotWidget, 'FlowGraph')
@@ -193,8 +192,22 @@ class Ui(QtWidgets.QWidget):
 
             x_axis = numpy.subtract(self.flowTimeData, time.time())
             y_axix = self.flowData
+            self.LabelFlow.setText(str(flow)+"ml/min")
             self.FlowGraph.plot(x_axis, y_axix, clear=True,fillLevel=0, pen=self.pen ,brush=(255,255,255,255))
 
+            volume = self.Interface.getActualVolume()
+            if volume != None:
+                self.volumeData.append(volume)
+                self.volumeTimeData.append(time.time())
+            
+                if len(self.volumeData) > self.maxDataPoints:
+                    self.volumeData.pop(0)
+                    self.volumeTimeData.pop(0)
+
+            x_axis = numpy.subtract(self.volumeTimeData, time.time())
+            y_axix = self.volumeData
+            self.LabelVolume.setText(str(volume)+"ml")
+            self.VolumeGraph.plot(x_axis, y_axix, clear=True,fillLevel=0, pen=self.pen ,brush=(255,255,255,255))
             #Setting            
             if self.running == True:
                 if self.timer_start_stop_button.isActive() == True:
@@ -216,6 +229,7 @@ class Ui(QtWidgets.QWidget):
             self.Start_Stop_Button.setStyleSheet("background-color : #f7751f ")  
     
         #Update Values under slieder
+        #self.checkSliderChanged() #Disabled to improve performance
         self.LabelSetTInspRise.setText(str(self.TInspRiseSlider.value()/1000)+"s")
         self.LabelSetTInspHold.setText(str(self.TInspHoldSlider.value()/1000)+"s")
         self.LabelSetTExpFall.setText(str(self.TExpFallSlider.value()/1000)+"s")
@@ -224,18 +238,56 @@ class Ui(QtWidgets.QWidget):
         self.LabelSetPEEP.setText(str(self.PEEPSlider.value()/1000)+"mbar")
         self.LabelSetPLimit.setText(str(self.PLimitSlider.value()/1000)+"mbar")
         CycleTime = self.TInspRiseSlider.value()+self.TInspHoldSlider.value()+self.TExpFallSlider.value()+self.TExpHoldSlider.value()
+        
         if CycleTime != 0:
-            self.CycleFreq = 60000/CycleTime
-            self.LabelResultFreq.setText(str("{:.2f}".format(self.CycleFreq))+" /min")
-            self.Labelfreq.setText(str("{:.2f}".format(self.CycleFreq))+" /min")
+            CycleFreq = 60000/CycleTime
+            self.LabelResultFreq.setText(str("{:.2f}".format(CycleFreq))+" /min")
+            self.Labelfreq.setText(str("{:.2f}".format(CycleFreq))+" /min")
 
         else: 
             self.LabelResultFreq.setText("--")
 
     
     
-    #function called when start/stop button pressed. Starting program or counting down to confirm stop            
-    #Paint Trinamic logo
+    def checkSliderChanged(self):
+        changedStyle = """.QSlider {} 
+        .QSlider::groove:vertical {border: 1px solid #262626;width: 5px;background: rgb(255, 255, 255) ;margin: 0 12px;}
+        .QSlider::handle:vertical {background:#3a5b78 ; border: 1px solid rgb(0, 0, 0); height: 30px; margin: -0px -35px;}"""
+        unchangedStyle = """.QSlider {}
+        .QSlider::groove:vertical {border: 1px solid #262626;width: 5px;background: rgb(255, 255, 255) ;margin: 0 12px;}
+        .QSlider::handle:vertical {background:#afb3b6 ; border: 1px solid rgb(0, 0, 0); height: 30px; margin: -0px -35px;}"""
+
+        if self.TInspRiseSlider.value() != self.Interface.getInhalationRiseTime():
+            self.TInspRiseSlider.setStyleSheet(changedStyle)
+        else:
+            self.TInspRiseSlider.setStyleSheet(unchangedStyle)
+            
+        if self.TInspHoldSlider.value() != self.Interface.getInhalationPauseTime():
+            self.TInspHoldSlider.setStyleSheet(changedStyle)
+        else:
+            self.TInspHoldSlider.setStyleSheet(unchangedStyle)
+             
+        if self.TExpFallSlider.value() != self.Interface.getExhalationFallTime():
+            self.TExpFallSlider.setStyleSheet(changedStyle)
+        else:
+            self.TExpFallSlider.setStyleSheet(unchangedStyle)
+             
+        if self.TExpHoldSlider.value() != self.Interface.getExhalationPauseTime():
+            self.TExpHoldSlider.setStyleSheet(changedStyle)
+        else:
+            self.TExpHoldSlider.setStyleSheet(unchangedStyle)
+#             
+        if self.PEEPSlider.value() != self.Interface.getPeepPressure():
+            self.PEEPSlider.setStyleSheet(changedStyle)
+        else:
+            self.PEEPSlider.setStyleSheet(unchangedStyle)
+            
+        if self.PLimitSlider.value() != self.Interface.getLimitPresssure():
+            self.PLimitSlider.setStyleSheet(changedStyle)
+        else:
+            self.PLimitSlider.setStyleSheet(unchangedStyle)
+    
+    #Paint Trinamic logo   
     def paintEvent(self, event):
         painter = QtGui.QPainter(self)
         windowWidth = self.width()
@@ -252,6 +304,7 @@ class Ui(QtWidgets.QWidget):
         painter.drawImage(QtCore.QRectF(xcor, ycor ,xsize, ysize), QtGui.QImage('resources/logos.svg'))
         painter.save()
     
+    #function called when start/stop button pressed. Starting program or counting down to confirm stop            
     def start_Stop_Button_pressed(self):
         print("running") 
         if self.Interface.isConnected() == True:
@@ -339,7 +392,8 @@ class Ui(QtWidgets.QWidget):
 
         print("Loaded Settings from board")
     
-                
+    def NullFlowSensor(self):
+        return
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     #app.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
