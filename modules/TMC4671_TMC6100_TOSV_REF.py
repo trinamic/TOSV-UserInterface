@@ -34,11 +34,19 @@ class TMC4671_TMC6100_TOSV_REF(object):
     " standard functions "
     def rotate(self, velocity):
         self.setAxisParameter(self.APs.TargetVelocity, velocity)
-
+        
     def actualVelocity(self):
         reg_value = self.axisParameter(self.APs.ActualVelocity)
-        return TMC_helpers.toSigned32(reg_value)# better use this? (ED) 
-
+        return TMC_helpers.toSigned32(reg_value)
+    
+    def actualFlow(self):
+        reg_value = self.axisParameter(self.APs.ActualFlow)
+        return TMC_helpers.toSigned32(reg_value)
+    
+    def actualVolume(self):
+        reg_value = self.axisParameter(self.APs.ActualVolume)
+        return TMC_helpers.toSigned32(reg_value)
+    
     def showMotorConfiguration(self):
         print("Motor configuration:")
         print("\tMotor pole pairs: " + str(self.axisParameter(self.APs.MotorPolePairs)))
@@ -147,6 +155,8 @@ class _APs():
     TosvExhalationPauseTime     = 107
     TosvLimitPresssure          = 108
     TosvPeepPressure            = 109
+    ActualFlow                  = 110
+    ActualVolume                = 113
     
     DebugValue0                 = 240
     DebugValue1                 = 241
