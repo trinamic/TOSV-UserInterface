@@ -156,6 +156,7 @@ class _APs():
     TosvLimitPresssure          = 108
     TosvPeepPressure            = 109
     ActualFlow                  = 110
+    ZeroFlowSensor              = 111
     ActualVolume                = 113
     
     DebugValue0                 = 240

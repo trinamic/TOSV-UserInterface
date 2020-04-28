@@ -9,6 +9,7 @@ Created on 14.04.2020
 import sys
 import numpy
 import time
+import multiprocessing
 
 from PyQt5 import QtWidgets, uic, QtCore, QtGui
 import pyqtgraph 
@@ -37,7 +38,19 @@ class Ui(QtWidgets.QWidget):
         
         self.pressureData = list()
         self.pressureTimeData = list()
-
+        
+        self.stateData = list()
+        self.stateTimeData = list()
+        
+        self.actualPressure = 0 
+        self.actualVolume = 0
+        self.actualFlow  = 0
+        self.currentState = 0
+        self.cycleTime = 0
+        self.cycleFreq = 0
+        
+        self.cycleMaxVolume = 0
+        self.actualAMV = 0
         print("maxDataPoints: " + str(self.maxDataPoints))
         
         #init values
@@ -49,6 +62,8 @@ class Ui(QtWidgets.QWidget):
             self.flowTimeData.append(initTime)
             self.pressureData.append(0)
             self.pressureTimeData.append(initTime)
+            self.stateData.append(0)
+            self.stateTimeData.append(initTime)
                     
         self.running = False
         self.wasconnected = False
@@ -95,8 +110,8 @@ class Ui(QtWidgets.QWidget):
             
         #Define Labels
         #Labels in Overview
-        self.LabelVolume = self.findChild(QtWidgets.QLabel, 'VolumeLabel')
-        self.LabelFlow = self.findChild(QtWidgets.QLabel, 'FlowLabel')
+        self.LabelVolume = self.findChild(QtWidgets.QLabel, 'VTLabel')
+        self.LabelAMV = self.findChild(QtWidgets.QLabel, 'AMVLabel')
         self.LabelPMax = self.findChild(QtWidgets.QLabel, 'PMaxLabel')
         self.LabelPLimit = self.findChild(QtWidgets.QLabel, 'PLimLabel')
         self.LabelPEEP = self.findChild(QtWidgets.QLabel, 'PeepLabel')
@@ -156,58 +171,20 @@ class Ui(QtWidgets.QWidget):
             #self.setCursor(QtCore.Qt.BlankCursor)
         else:
             self.show()
-            
+        
     #Updating the GUI periodically, called by timer. 
     #ToDo: Cleanup 
     def update_gui(self):
         if self.Interface.isConnected() == True:
             self.SetMedSettingsButton.setEnabled(True)
             self.CancelMedSettingsButton.setEnabled(True)
-            
             # update pressure graph
-            pressure = self.Interface.getActualPressure()
-            if pressure:
-                pressure = pressure/1000
-                self.pressureData.append(pressure)
-                self.pressureTimeData.append(time.time())
-
-                if len(self.pressureData) > self.maxDataPoints:
-                    self.pressureData.pop(0)
-                    self.pressureTimeData.pop(0)
-
-            x_axis = numpy.subtract(self.pressureTimeData, time.time())
-            y_axis = self.pressureData
-            self.LabelPMax.setText(str(max(y_axis))+"mbar")
-            self.PressureGraph.plot(x_axis, y_axis, clear=True,fillLevel=0, pen=self.pen ,brush=(255,255,255,255))
-            
-            # update flow graph
-            flow = self.Interface.getActualFlow()
-            if flow != None:
-                self.flowData.append(flow)
-                self.flowTimeData.append(time.time())
-            
-                if len(self.flowData) > self.maxDataPoints:
-                    self.flowData.pop(0)
-                    self.flowTimeData.pop(0)
-
-            x_axis = numpy.subtract(self.flowTimeData, time.time())
-            y_axix = self.flowData
-            self.LabelFlow.setText(str(flow)+"ml/min")
-            self.FlowGraph.plot(x_axis, y_axix, clear=True,fillLevel=0, pen=self.pen ,brush=(255,255,255,255))
-
-            volume = self.Interface.getActualVolume()
-            if volume != None:
-                self.volumeData.append(volume)
-                self.volumeTimeData.append(time.time())
-            
-                if len(self.volumeData) > self.maxDataPoints:
-                    self.volumeData.pop(0)
-                    self.volumeTimeData.pop(0)
-
-            x_axis = numpy.subtract(self.volumeTimeData, time.time())
-            y_axix = self.volumeData
-            self.LabelVolume.setText(str(volume)+"ml")
-            self.VolumeGraph.plot(x_axis, y_axix, clear=True,fillLevel=0, pen=self.pen ,brush=(255,255,255,255))
+            #self.getValues()
+            multiprocessing.Process(target=self.getValues())
+            self.updateGraph()
+            #multiprocessing.Process(target=self.updateGraph())
+            self.writeOverviewLabels()
+            self.writeMedSettingsLabels()
             #Setting            
             if self.running == True:
                 if self.timer_start_stop_button.isActive() == True:
@@ -227,29 +204,8 @@ class Ui(QtWidgets.QWidget):
             self.SetMedSettingsButton.setEnabled(False)
             self.CancelMedSettingsButton.setEnabled(False)
             self.Start_Stop_Button.setStyleSheet("background-color : #f7751f ")  
-    
-        #Update Values under slieder
-        #self.checkSliderChanged() #Disabled to improve performance
-        self.LabelSetTInspRise.setText(str(self.TInspRiseSlider.value()/1000)+"s")
-        self.LabelSetTInspHold.setText(str(self.TInspHoldSlider.value()/1000)+"s")
-        self.LabelSetTExpFall.setText(str(self.TExpFallSlider.value()/1000)+"s")
-        self.LabelSetTExpHold.setText(str(self.TExpHoldSlider.value()/1000)+"s")
-        
-        self.LabelSetPEEP.setText(str(self.PEEPSlider.value()/1000)+"mbar")
-        self.LabelSetPLimit.setText(str(self.PLimitSlider.value()/1000)+"mbar")
-        CycleTime = self.TInspRiseSlider.value()+self.TInspHoldSlider.value()+self.TExpFallSlider.value()+self.TExpHoldSlider.value()
-        
-        if CycleTime != 0:
-            CycleFreq = 60000/CycleTime
-            self.LabelResultFreq.setText(str("{:.2f}".format(CycleFreq))+" /min")
-            self.Labelfreq.setText(str("{:.2f}".format(CycleFreq))+" /min")
-
-        else: 
-            self.LabelResultFreq.setText("--")
-
-    
-    
     def checkSliderChanged(self):
+        #ToDo. rewrite with local Variables
         changedStyle = """.QSlider {} 
         .QSlider::groove:vertical {border: 1px solid #262626;width: 5px;background: rgb(255, 255, 255) ;margin: 0 12px;}
         .QSlider::handle:vertical {background:#3a5b78 ; border: 1px solid rgb(0, 0, 0); height: 30px; margin: -0px -35px;}"""
@@ -286,7 +242,6 @@ class Ui(QtWidgets.QWidget):
             self.PLimitSlider.setStyleSheet(changedStyle)
         else:
             self.PLimitSlider.setStyleSheet(unchangedStyle)
-    
     #Paint Trinamic logo   
     def paintEvent(self, event):
         painter = QtGui.QPainter(self)
@@ -303,7 +258,88 @@ class Ui(QtWidgets.QWidget):
         ycor = windowheigt-ysize-ypadding
         painter.drawImage(QtCore.QRectF(xcor, ycor ,xsize, ysize), QtGui.QImage('resources/logos.svg'))
         painter.save()
-    
+    def getValues(self):
+        #Get Sensor Data
+        self.actualPressure = self.Interface.getActualPressure()
+        self.actualVolume = self.Interface.getActualVolume()
+        self.actualFlow = self.Interface.getActualFlow()
+        self.currentState = self.Interface.getCurrentState()
+        
+        if self.actualPressure:
+            self.actualPressure = self.actualPressure/1000
+            self.pressureData.append(self.actualPressure)
+            self.pressureTimeData.append(time.time())
+            
+            if len(self.pressureData) > self.maxDataPoints:
+                self.pressureData.pop(0)
+                self.pressureTimeData.pop(0)
+                
+        if self.actualFlow != None:
+            self.flowData.append(self.actualFlow)
+            self.flowTimeData.append(time.time())
+            
+            if len(self.flowData) > self.maxDataPoints:
+                self.flowData.pop(0)
+                self.flowTimeData.pop(0)
+        
+        if self.actualVolume != None:
+            self.volumeData.append(self.actualVolume)
+            self.volumeTimeData.append(time.time())
+            
+            if len(self.volumeData) > self.maxDataPoints:
+                self.volumeData.pop(0)
+                self.volumeTimeData.pop(0)
+                
+        if self.currentState != None:
+            self.stateData.append(self.currentState)
+            self.stateTimeData.append(time.time())
+            
+            if len(self.stateData) > self.maxDataPoints:
+                self.stateData.pop(0)
+                self.stateTimeData.pop(0)
+        
+            findmax = self.findMaxInCycle(self.volumeData, self.stateData)
+            if findmax:
+                self.cycleMaxVolume=findmax
+                if self.cycleTime != 0:
+                    self.actualAMV = self.cycleMaxVolume*self.cycleFreq
+
+    def updateGraph(self):
+        
+        x_axis = numpy.subtract(self.pressureTimeData, time.time())
+        y_axis = self.pressureData
+        self.PressureGraph.plot(x_axis, y_axis, clear=True,fillLevel=0, pen=self.pen ,brush=(255,255,255,255))
+            
+        x_axis = numpy.subtract(self.flowTimeData, time.time())
+        y_axix = self.flowData
+        self.FlowGraph.plot(x_axis, y_axix, clear=True,fillLevel=0, pen=self.pen ,brush=(255,255,255,255))
+
+        x_axis = numpy.subtract(self.volumeTimeData, time.time())
+        y_axix = self.volumeData
+        self.VolumeGraph.plot(x_axis, y_axix, clear=True,fillLevel=0, pen=self.pen ,brush=(255,255,255,255))
+
+    def writeOverviewLabels(self):
+        self.LabelVolume.setText(str(self.cycleMaxVolume)+"ml")
+        self.LabelAMV.setText(str("{:.2f}".format(self.actualAMV))+"ml/min")
+        self.LabelPMax.setText(str(max(self.pressureData))+"mbar")
+        
+    def writeMedSettingsLabels(self):
+        self.LabelSetTInspRise.setText(str(self.TInspRiseSlider.value()/1000)+"s")
+        self.LabelSetTInspHold.setText(str(self.TInspHoldSlider.value()/1000)+"s")
+        self.LabelSetTExpFall.setText(str(self.TExpFallSlider.value()/1000)+"s")
+        self.LabelSetTExpHold.setText(str(self.TExpHoldSlider.value()/1000)+"s")
+        
+        self.LabelSetPEEP.setText(str(self.PEEPSlider.value()/1000)+"mbar")
+        self.LabelSetPLimit.setText(str(self.PLimitSlider.value()/1000)+"mbar")
+        self.cycleTime = self.TInspRiseSlider.value()+self.TInspHoldSlider.value()+self.TExpFallSlider.value()+self.TExpHoldSlider.value()
+        
+        if self.cycleTime != 0:
+            self.cycleFreq = 60000/self.cycleTime
+            self.LabelResultFreq.setText(str("{:.2f}".format(self.cycleFreq))+" /min")
+            self.Labelfreq.setText(str("{:.2f}".format(self.cycleFreq))+" /min")
+
+        else: 
+            self.LabelResultFreq.setText("--")
     #function called when start/stop button pressed. Starting program or counting down to confirm stop            
     def start_Stop_Button_pressed(self):
         print("running") 
@@ -324,7 +360,7 @@ class Ui(QtWidgets.QWidget):
             self.timer_start_stop_button.stop()
         else:
             return
-        
+    
     #show buttons to confirm stop
     def confirm_stop(self):
         #insert change of buttons
@@ -393,7 +429,20 @@ class Ui(QtWidgets.QWidget):
         print("Loaded Settings from board")
     
     def NullFlowSensor(self):
+        self.Interface.ZeroFlowSensor()
         return
+    #Find Max in last cycle 
+    def findMaxInCycle(self, ydata, statedata):
+        if statedata[self.maxDataPoints-1] == 4:
+            max = 0
+            for x in range(self.maxDataPoints):
+                if statedata[self.maxDataPoints-1] == 5:
+                    break
+                else:
+                    if  ydata[(self.maxDataPoints-1)-x] > max:
+                        max = ydata[(self.maxDataPoints-1)-x]
+            return max
+        return 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     #app.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)

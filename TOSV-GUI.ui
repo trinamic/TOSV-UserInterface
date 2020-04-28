@@ -186,6 +186,16 @@ border: 1px solid black;}
           <number>9</number>
          </property>
          <item>
+          <widget class="QLabel" name="label_14">
+           <property name="text">
+            <string>ALARM</string>
+           </property>
+           <property name="textInteractionFlags">
+            <set>Qt::LinksAccessibleByMouse|Qt::TextEditable</set>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="PlotWidget" name="VolumeGraph" native="true">
            <property name="font">
             <font>
@@ -290,12 +300,12 @@ border: 1px solid black;}
          <item>
           <widget class="QLabel" name="label_8">
            <property name="text">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;right&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Volume &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;right&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;VT&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="VolumeLabel">
+          <widget class="QLabel" name="VTLabel">
            <property name="font">
             <font>
              <family>Open Sans</family>
@@ -318,12 +328,12 @@ border: 1px solid black;}
          <item>
           <widget class="QLabel" name="label_9">
            <property name="text">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;right&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Flow &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;right&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;AMV&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="FlowLabel">
+          <widget class="QLabel" name="AMVLabel">
            <property name="font">
             <font>
              <family>Open Sans</family>
@@ -1305,7 +1315,7 @@ border: 1px solid black;}*/
             </font>
            </property>
            <property name="text">
-            <string>Null Flowsensor</string>
+            <string>Zero Flowsensor</string>
            </property>
           </widget>
          </item>

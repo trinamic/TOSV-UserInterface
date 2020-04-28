@@ -158,6 +158,14 @@ class TOSV_Interface:
         except: 
             self.connected = False 
             print("Connection Error: setPeepPressure")
+    
+    def getCurrentState(self):
+        try:
+            return self.module.axisParameter(self.module.APs.TosvState)
+        except: 
+            self.connected = False 
+            print("Connection Error: TosvState")       
+            
             
     def getInhalationRiseTime(self):
         try:
@@ -200,10 +208,13 @@ class TOSV_Interface:
         except: 
             self.connected = False 
             print("Connection Error: getPeepPressure")
-    def NullFlowSensor(self):
+            
+            
+            
+    def ZeroFlowSensor(self):
         try:
+            self.module.setAxisParameter(self.module.APs.ZeroFlowSensor, 0)
             return
-            #return self.module.axisParameter(self.module.APs.TosvPeepPressure)
         except: 
             self.connected = False 
-            print("Connection Error: getPeepPressure")
+            print("Connection Error: ZeroFlow")
