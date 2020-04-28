@@ -77,7 +77,8 @@ class Ui(QtWidgets.QWidget):
         self.SetMedSettingsButton = self.findChild(QtWidgets.QPushButton, 'SetMedSettingsButton')
         self.CancelMedSettingsButton = self.findChild(QtWidgets.QPushButton, 'CancelMedSettingsButton')
         self.NullFlowsensorButton = self.findChild(QtWidgets.QPushButton, 'NullFlowsensorButton')
-
+        self.ModeDropdown = self.findChild(QtWidgets.QComboBox, 'ModeDropDown')
+        self.StackedModes = self.findChild(QtWidgets.QStackedWidget, 'ModeSettings')
         #Set up Buttons
         self.StopButton.hide()
         self.CancelButton.hide()
@@ -96,6 +97,7 @@ class Ui(QtWidgets.QWidget):
         
         self.NullFlowsensorButton.clicked.connect(self.NullFlowSensor)
         
+        self.ModeDropdown.currentIndexChanged.connect(self.changeStackedModes)
         #Buttons are disabled
         #self.ConnectButton.clicked.connect(self.Interface.connect)
         #self.DisconnectButton.clicked.connect(self.Interface.disconnect)
@@ -162,6 +164,7 @@ class Ui(QtWidgets.QWidget):
         self.timer_reconnect = QtCore.QTimer()
         self.timer_reconnect.timeout.connect(self.reconnect)
         self.timer_reconnect.start(1000) #Dont set to low.. otherwise the connection will fail
+        
         
         #Show Window, depending on Fullscreen setting. 
         self.setWindowTitle('TOSV UserInterface')
@@ -443,6 +446,9 @@ class Ui(QtWidgets.QWidget):
                         max = ydata[(self.maxDataPoints-1)-x]
             return max
         return 
+    
+    def changeStackedModes(self):
+        self.StackedModes.setCurrentIndex(self.ModeDropdown.currentIndex())
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     #app.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
