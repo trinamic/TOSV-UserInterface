@@ -96,6 +96,12 @@ class TMC4671_TMC6100_TOSV_REF(object):
         }
         return switcher.get(i,"Invalid state")
     
+    def ModetoName(self, i):
+        switcher={
+                0:'Pressure Mode',
+                1:'Volume Mode'
+        }
+        return switcher.get(i,"Invalid state")
 class _APs():
     " motor control parameter "
     StatusFlags                 = 0
@@ -144,7 +150,8 @@ class _APs():
     HallInterpolation           = 52
     HallPhiEOffset              = 53
     HallInputsRaw               = 54
-
+    
+    tosvMode                    = 99
     TosvEnable                  = 100
     TosvState                   = 101
     TosvTimer                   = 102

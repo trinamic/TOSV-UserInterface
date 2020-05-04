@@ -144,7 +144,12 @@ class TOSV_Interface:
         except: 
             self.connected = False 
             print("Connection Error: setExhalationPauseTime")
-            
+    def setMode(self, value):
+        try:
+            self.module.setAxisParameter(self.module.APs.tosvMode, value)
+        except: 
+            self.connected = False 
+            print("Connection Error: Mode")    
     def setLimitPresssure(self, value):
         try:
             self.module.setAxisParameter(self.module.APs.TosvLimitPresssure, value)
@@ -207,10 +212,13 @@ class TOSV_Interface:
             return self.module.axisParameter(self.module.APs.TosvPeepPressure)
         except: 
             self.connected = False 
-            print("Connection Error: getPeepPressure")
-            
-            
-            
+            print("Connection Error: getPeepPressure")        
+    def getMode(self):
+        try:
+            return  self.module.axisParameter(self.module.APs.tosvMode)
+        except: 
+            self.connected = False 
+            print("Connection Error: Mode")
     def ZeroFlowSensor(self):
         try:
             self.module.setAxisParameter(self.module.APs.ZeroFlowSensor, 0)
@@ -218,3 +226,4 @@ class TOSV_Interface:
         except: 
             self.connected = False 
             print("Connection Error: ZeroFlow")
+            
