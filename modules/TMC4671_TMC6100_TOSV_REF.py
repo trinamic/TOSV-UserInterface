@@ -151,7 +151,7 @@ class _APs():
     HallPhiEOffset              = 53
     HallInputsRaw               = 54
     
-    tosvMode                    = 99
+    TosvMode                    = 99
     TosvEnable                  = 100
     TosvState                   = 101
     TosvTimer                   = 102
@@ -164,7 +164,7 @@ class _APs():
     TosvPeepPressure            = 109
     ActualFlow                  = 110
     ZeroFlowSensor              = 111
-    TosvTargetVolume            = 112
+    TosvTargetVolume            = 114
     ActualVolume                = 113
     
     DebugValue0                 = 240

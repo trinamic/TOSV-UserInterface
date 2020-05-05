@@ -13,7 +13,7 @@ from modules.TMC4671_TMC6100_TOSV_REF import TMC4671_TMC6100_TOSV_REF
 #ToDo: detect when connection drops. 
 class TOSV_Interface:
     def __init__(self):
-        port = "/dev/ttyS0" #Change for different Interface type
+        port = "COM20"#"/dev/ttyS0" #Change for different Interface type
         #port = "/dev/ttyS0" #Change for different Interface type
         interface = "serial_tmcl"
         datarate = "115200"
@@ -50,8 +50,6 @@ class TOSV_Interface:
         self.module.showPIConfiguration()
         self.module.showSelectedCommutationFeedback()
         self.module.showTosvConfiguration()
-        self.module.setAxisParameter(self.module.APs.PressureP, 3000)
-        self.module.setAxisParameter(self.module.APs.PressureI, 2500)
 
         " motor/module settings "
         print("Motor set up done")
@@ -67,173 +65,104 @@ class TOSV_Interface:
         except: 
             print("closing connection failed... was a connection open?")
 
-    #starts turning the motor, replace with start command for actual baord      
-    def startVentilation(self):
-        try:
-            self.module.setAxisParameter(self.module.APs.TosvEnable, 1)
+    def getBoardReading(self, Parameter):
+        try: 
+            APsParam = getattr(self.module.APs, Parameter)
+            return self.module.axisParameter(APsParam)
         except: 
             self.connected = False 
-            print("Connection Error: startVentilation")
+            print(f"Connection Error: {Parameter} could not be read")
+    def setBoardParameter(self, Parameter, value):
+        try: 
+            APsParam = getattr(self.module.APs, Parameter)
+            return self.module.setAxisParameter(APsParam, value)
+        except: 
+            self.connected = False 
+            print(f"Connection Error: {Parameter} could not be written")
+    #starts turning the motor, replace with start command for actual baord    
+      
+    def startVentilation(self):
+        self.setBoardParameter("TosvEnable", 1)
             
     #stops turning the motor, replace with start command for actual baord      
     def stopVentilation(self):
-        try:
-            self.module.setAxisParameter(self.module.APs.TosvEnable, 0)
-        except: 
-            self.connected = False 
-            print("Connection Error: stopVentilation")
+        self.setBoardParameter("TosvEnable", 0)
             
     # read actual pressure from board
     def getActualPressure(self):
-        try:
-            return self.module.axisParameter(self.module.APs.ActualPressure)
-        except: 
-            self.connected = False 
-            print("Connection Error: getActualPressure")
+        self.getBoardReading("ActualPressure")
 
     # read actual flow from board
     def getActualFlow(self):
         try:
-            # todo: update with real flow value
             return self.module.actualFlow()
         except: 
             self.connected = False 
             print("Connection Error: getActualFlow")
     def getActualVolume(self):
         try:
-            # todo: update with real flow value
             return self.module.actualVolume()
         except: 
             self.connected = False 
             print("Connection Error: getActualVolume")
             
     def getStatus(self):
-        try:
-            if self.module.axisParameter(self.module.APs.TosvEnable) == 1:
-                return True
-            else:
-                return False
-        except: 
-            self.connected = False 
-            print("Connection Error: getStatus")
+        enabled = self.getBoardReading("TosvEnable")
+        if enabled == 1:
+            return True
+        else:
+            return False
             
     def setInhalationRiseTime(self,value):
-        try:
-            self.module.setAxisParameter(self.module.APs.TosvInhalationRiseTime, value)
-        except: 
-            self.connected = False 
-            print("Connection Error: setInhalationRiseTime")
+        self.setBoardParameter("TosvInhalationRiseTime", value)
             
     def setInhalationPauseTime(self, value):
-        try:
-            self.module.setAxisParameter(self.module.APs.TosvInhalationPauseTime, value)
-        except: 
-            self.connected = False 
-            print("Connection Error: setInhalationPauseTime")
+        self.setBoardParameter("TosvInhalationPauseTime", value)
             
     def setExhalationFallTime(self, value):
-        try:
-            self.module.setAxisParameter(self.module.APs.TosvExhalationFallTime, value)
-        except: 
-            self.connected = False 
-            print("Connection Error: setExhalationFallTime")
+        self.setBoardParameter("TosvExhalationFallTime", value)
             
     def setExhalationPauseTime(self, value):
-        try:
-            self.module.setAxisParameter(self.module.APs.TosvExhalationPauseTime, value)
-        except: 
-            self.connected = False 
-            print("Connection Error: setExhalationPauseTime")
+        self.setBoardParameter("TosvExhalationPauseTime", value)
+        
     def setMode(self, value):
-        try:
-            self.module.setAxisParameter(self.module.APs.tosvMode, value)
-        except: 
-            self.connected = False 
-            print("Connection Error: Mode")    
+        self.setBoardParameter("TosvMode", value)
+        
     def setLimitPresssure(self, value):
-        try:
-            self.module.setAxisParameter(self.module.APs.TosvLimitPresssure, value)
-        except: 
-            self.connected = False 
-            print("Connection Error: setLIMITPresssure")
+        self.setBoardParameter("TosvLimitPresssure", value)
             
     def setPeepPressure(self, value):
-        try:
-            self.module.setAxisParameter(self.module.APs.TosvPeepPressure, value)
-        except: 
-            self.connected = False 
-            print("Connection Error: setPeepPressure")
+        self.setBoardParameter("TosvPeepPressure", value)
+        
     def setTargetVolume(self, value):
-        try:
-            self.module.setAxisParameter(self.module.APs.TosvTargetVolume, value)
-        except: 
-            self.connected = False 
-            print("Connection Error: TosvTargetVolume")
+        self.setBoardParameter("TosvTargetVolume", value)
+        
     def getCurrentState(self):
-        try:
-            return self.module.axisParameter(self.module.APs.TosvState)
-        except: 
-            self.connected = False 
-            print("Connection Error: TosvState")       
+        return self.getBoardReading("TosvState")
+        
     def getTargetVolume(self):
-        try:
-            return self.module.axisParameter(self.module.APs.TosvTargetVolume)
-        except: 
-            self.connected = False 
-            print("Connection Error: TosvTargetVolume")            
+        return self.getBoardReading("TosvTargetVolume")      
             
     def getInhalationRiseTime(self):
-        try:
-            return self.module.axisParameter(self.module.APs.TosvInhalationRiseTime)
-        except: 
-            self.connected = False 
-            print("Connection Error: getInhalationRiseTime")
+        return self.getBoardReading("TosvInhalationRiseTime")
             
     def getInhalationPauseTime(self):
-        try:
-            return self.module.axisParameter(self.module.APs.TosvInhalationPauseTime)
-        except: 
-            self.connected = False 
-            print("Connection Error: getInhalationPauseTime")
+        return self.getBoardReading("TosvInhalationPauseTime")
             
     def getExhalationFallTime(self):
-        try:
-            return self.module.axisParameter(self.module.APs.TosvExhalationFallTime)
-        except: 
-            self.connected = False 
-            print("Connection Error: getExhalationFallTime")
+        return self.getBoardReading("TosvExhalationFallTime")
             
     def getExhalationPauseTime(self):
-        try:
-            return self.module.axisParameter(self.module.APs.TosvExhalationPauseTime)
-        except: 
-            self.connected = False 
-            print("Connection Error: getExhalationPauseTime")
+        return self.getBoardReading("TosvExhalationPauseTime")
             
     def getLimitPresssure(self):
-        try:
-            return self.module.axisParameter(self.module.APs.TosvLimitPresssure)
-        except: 
-            self.connected = False 
-            print("Connection Error: getLimitPresssure")
+        return self.getBoardReading("TosvLimitPresssure")
             
     def getPeepPressure(self):
-        try:
-            return self.module.axisParameter(self.module.APs.TosvPeepPressure)
-        except: 
-            self.connected = False 
-            print("Connection Error: getPeepPressure")        
+        return self.getBoardReading("TosvPeepPressure")
+        
     def getMode(self):
-        try:
-            return  self.module.axisParameter(self.module.APs.tosvMode)
-        except: 
-            self.connected = False 
-            print("Connection Error: Mode")
+        return self.getBoardReading("TosvMode")
+        
     def ZeroFlowSensor(self):
-        try:
-            self.module.setAxisParameter(self.module.APs.ZeroFlowSensor, 0)
-            return
-        except: 
-            self.connected = False 
-            print("Connection Error: ZeroFlow")
-            
+        self.setBoardParameter("ZeroFlowSensor", 0)

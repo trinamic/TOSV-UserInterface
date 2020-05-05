@@ -10,7 +10,7 @@ import sys
 import numpy
 import time
 import multiprocessing
-import socket
+import netifaces as ni
 
 from PyQt5 import QtWidgets, uic, QtCore, QtGui
 import pyqtgraph 
@@ -18,7 +18,7 @@ import pyqtgraph
 from TOSV_Interface import TOSV_Interface
 
 #Set to True in for fullscreen 
-fullscreen = True 
+fullscreen = False 
 
 class Ui(QtWidgets.QWidget):
     def __init__(self):
@@ -550,9 +550,8 @@ class Ui(QtWidgets.QWidget):
         
     def showIpInTecConfig(self):
         try: 
-            hostName = socket.gethostname()
-            ip = socket.gethostbyname(hostName)
-            self.LabelIpAddress.setText(str(hostName) +"    "+ str(ip))
+            ip = ni.ifaddresses('eth0')[ni.AF_INET][0]['addr']
+            self.LabelIpAddress.setText(str(ip))
         except:
             self.LabelIpAddress.setText('No Network')
 
