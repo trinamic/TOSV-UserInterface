@@ -143,13 +143,21 @@ class _APs():
     FluxPIErrorSum              = 42
     VelocityPIErrorSum          = 43
     PressurePIErrorSum          = 44
+    VolumePIErrorSum            = 45
     ActualOpenLoopAngle         = 47
     ActualDigitalHallAngle      = 48
+    MaxNegativeCurrent          = 49
     HallPolarity                = 50
     HallDirection               = 51
     HallInterpolation           = 52
     HallPhiEOffset              = 53
     HallInputsRaw               = 54
+    VolumeP                     = 56
+    VolumeI                     = 57
+    
+    BrakeChopperEnable          = 95
+    BrakeChopperVoltageLimit    = 96
+    BrakeChopperHysteresis      = 97
     
     TosvMode                    = 99
     TosvEnable                  = 100
@@ -164,8 +172,9 @@ class _APs():
     TosvPeepPressure            = 109
     ActualFlow                  = 110
     ZeroFlowSensor              = 111
-    TosvTargetVolume            = 114
+    TargetVolume                = 112
     ActualVolume                = 113
+    MaxVolume                   = 114
     
     DebugValue0                 = 240
     DebugValue1                 = 241
