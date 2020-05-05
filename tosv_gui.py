@@ -317,7 +317,7 @@ class Ui(QtWidgets.QWidget):
     def getSettings(self):
         #Settings for Pressure Based Control 
         self.PressureRiseTime  = self.Interface.getInhalationRiseTime()
-        self.PressureInspHoldTime = self.Interface.getInhalationRiseTime()
+        self.PressureInspHoldTime = self.Interface.getInhalationPauseTime()
         self.PressureExpFallTime = self.Interface.getExhalationFallTime()
         self.PressureExpHoldTime = self.Interface.getExhalationPauseTime()
         self.PressureLimit = self.Interface.getLimitPresssure()
@@ -425,6 +425,7 @@ class Ui(QtWidgets.QWidget):
         #Values on Overviewpage
         self.LabelPEEP.setText(str(self.PressurePeep/1000)+"mbar")
         self.LabelPLimit.setText(str(self.PressureLimit/1000)+"mbar")
+        self.clearMedChanges()
 
     #Function setts the slieders in MedSettings back to values set in module 
     def clearMedChanges(self):
@@ -445,14 +446,13 @@ class Ui(QtWidgets.QWidget):
 
     def writeMedSettingsLabels(self):
         self.LabelSetPressureInspExp.setText(str(self.SliderPressureInspExp.value()/50))
-        self.LabelSetPressureFreq.setText(str(self.SliderPressureFreq.value()/10)+"1/min")
+        self.LabelSetPressureFreq.setText(str(self.SliderPressureFreq.value()/10)+"/min")
         self.LabelSetPressureRiseTime.setText(str(self.SliderPressureRiseTime.value()/1000)+"s")
         
         self.LabelSetPEEP.setText(str(self.PEEPSlider.value()/1000)+"mbar")
         self.LabelSetPLimit.setText(str(self.PLimitSlider.value()/1000)+"mbar")
 
-        self.Labelfreq.setText(str("{:.2f}".format(self.SliderPressureFreq.value()/10))+" 1/min")
-
+        self.Labelfreq.setText(str("{:.2f}".format(self.SliderPressureFreq.value()/10))+" /min")
     def NullFlowSensor(self):
         self.Interface.ZeroFlowSensor()
         return
@@ -464,6 +464,7 @@ class Ui(QtWidgets.QWidget):
             self.PressureInspHoldTime = TInsp-self.PressureRiseTime 
         else: 
             #ToDo: Insert Error
+            print("Settings not valid. Pressure ramp longer than inspiration time")
             self.PressureRiseTime = TInsp 
             self.PressureInspHoldTime = 0
 
@@ -471,9 +472,15 @@ class Ui(QtWidgets.QWidget):
             self.PressureExpHoldTime = TExp-self.PressureExpFallTime 
         else: 
             #ToDo: Insert Error
+            print("Settings not valid. Expiration time to short")
             self.PressureExpHoldTime = 0
             self.Freq = 1/(TInsp+self.PressureExpFallTime) 
-
+        print("Times:")
+        print(self.PressureRiseTime)
+        print(self.PressureInspHoldTime)
+        print(self.PressureExpFallTime)
+        print(self.PressureExpHoldTime)
+        self.CalcPressSettings()
     
     def CalcPressSettings(self):
         T = self.PressureRiseTime+self.PressureInspHoldTime+self.PressureExpFallTime+self.PressureExpHoldTime
@@ -483,6 +490,9 @@ class Ui(QtWidgets.QWidget):
             #ToDo:  Insert Error 
             return 
         self.PressureIE = (self.PressureRiseTime+self.PressureInspHoldTime)/(self.PressureExpFallTime+self.PressureExpHoldTime)
+        print("What should be set")
+        print(self.Freq)
+        print(self.PressureIE)
         
         
     #Find Max in last cycle 
