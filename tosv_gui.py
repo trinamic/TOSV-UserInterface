@@ -10,6 +10,7 @@ import sys
 import numpy
 import time
 import multiprocessing
+import socket
 
 from PyQt5 import QtWidgets, uic, QtCore, QtGui
 import pyqtgraph 
@@ -17,7 +18,7 @@ import pyqtgraph
 from TOSV_Interface import TOSV_Interface
 
 #Set to True in for fullscreen 
-fullscreen = False 
+fullscreen = True 
 
 class Ui(QtWidgets.QWidget):
     def __init__(self):
@@ -69,11 +70,11 @@ class Ui(QtWidgets.QWidget):
         self.wasconnected = False
         
         self.CurrentMode = 0
-        self.PressureRiseTime  = 0
-        self.PressureInspHoldTime = 0
-        self.PressureExpFallTime = 0
-        self.PressureExpHoldTime = 0
-        self.PressureIE = 1
+        self.InspRiseTime  = 0
+        self.InspHoldTime = 0
+        self.ExpFallTime = 0
+        self.ExpHoldTime = 0
+        self.InspExp = 1
         self.Freq = 0
         self.PressureLimit = 0
         self.PressurePeep = 0
@@ -111,15 +112,22 @@ class Ui(QtWidgets.QWidget):
         #Buttons are disabled
         #self.ConnectButton.clicked.connect(self.Interface.connect)
         #self.DisconnectButton.clicked.connect(self.Interface.disconnect)
-        #Define Sliders
+        
+        '''Define slieders'''
+        #Define sliders for pressure based control mode 
         self.SliderPressureInspExp = self.findChild(QtWidgets.QSlider, 'SliderPressureInspExp')
         self.SliderPressureFreq = self.findChild(QtWidgets.QSlider, 'SliderPressureFreq')
         self.SliderPressureRiseTime = self.findChild(QtWidgets.QSlider, 'SliderPressureRiseTime')
-        
-        self.PEEPSlider = self.findChild(QtWidgets.QSlider, 'SliderPEEP')
-        self.PLimitSlider = self.findChild(QtWidgets.QSlider, 'SliderPLimit')
-            
-        #Define Labels
+        self.SliderPressurePeep = self.findChild(QtWidgets.QSlider, 'SliderPressurePEEP')
+        self.SliderPressurePLimit = self.findChild(QtWidgets.QSlider, 'SliderPressurePLimit')
+        #Define sliders for volume based control mode. 
+        self.SliderVolumeInspExp = self.findChild(QtWidgets.QSlider, 'SliderVolumeInspExp')
+        self.SliderVolumeFreq = self.findChild(QtWidgets.QSlider, 'SliderVolumeFreq')
+        self.SliderVolumeRiseTime = self.findChild(QtWidgets.QSlider, 'SliderVolumeRiseTime')
+        self.SliderVolumePeep = self.findChild(QtWidgets.QSlider, 'SliderVolumePEEP')
+        self.SliderVolumePLimit = self.findChild(QtWidgets.QSlider, 'SliderVolumePLimit')    
+        self.SliderVolumeVT = self.findChild(QtWidgets.QSlider, 'SliderVolumeVT')
+        '''Define labels'''
         #Labels in Overview
         self.LabelVolume = self.findChild(QtWidgets.QLabel, 'VTLabel')
         self.LabelAMV = self.findChild(QtWidgets.QLabel, 'AMVLabel')
@@ -128,14 +136,23 @@ class Ui(QtWidgets.QWidget):
         self.LabelPEEP = self.findChild(QtWidgets.QLabel, 'PeepLabel')
         self.Labelfreq = self.findChild(QtWidgets.QLabel, 'fLabel')
         
-        #Labels in MedSettings for Pressure Control
+        #Labels in MedSettings for pressure based control
         self.LabelSetPressureInspExp = self.findChild(QtWidgets.QLabel, 'SetPressureInspExp')
         self.LabelSetPressureFreq = self.findChild(QtWidgets.QLabel, 'SetPressureFreq')
         self.LabelSetPressureRiseTime = self.findChild(QtWidgets.QLabel, 'SetPressureRiseTime')
-        
-        self.LabelSetPEEP = self.findChild(QtWidgets.QLabel, 'SetPeepLabel')
-        self.LabelSetPLimit = self.findChild(QtWidgets.QLabel, 'setPLimitLabel')
+        self.LabelSetPressurePEEP = self.findChild(QtWidgets.QLabel, 'SetPressurePeepLabel')
+        self.LabelSetPressurePLimit = self.findChild(QtWidgets.QLabel, 'SetPressurePLimitLabel')
     
+        #Labels in MedSettings for volume based control
+        self.LabelSetVolumeInspExp = self.findChild(QtWidgets.QLabel, 'SetVolumeInspExp')
+        self.LabelSetVolumeFreq = self.findChild(QtWidgets.QLabel, 'SetVolumeFreq')
+        self.LabelSetVolumeRiseTime = self.findChild(QtWidgets.QLabel, 'SetVolumeRiseTime')
+        self.LabelSetVolumeVT = self.findChild(QtWidgets.QLabel, 'SetVolumeVT')
+        self.LabelSetVolumePEEP = self.findChild(QtWidgets.QLabel, 'SetVolumePeepLabel')
+        self.LabelSetVolumePLimit = self.findChild(QtWidgets.QLabel, 'SetVolumePLimitLabel')
+        
+        self.LabelIpAddress = self.findChild(QtWidgets.QLabel, 'LabelIpAddress')
+        
         #Setting up Graphs
         #Setting up VolumeGraph
         self.pen = pyqtgraph.mkPen(color=(0, 0, 0))
@@ -179,11 +196,12 @@ class Ui(QtWidgets.QWidget):
         if fullscreen:
             self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
             self.showFullScreen()
-            #self.setCursor(QtCore.Qt.BlankCursor)
+            self.setCursor(QtCore.Qt.BlankCursor)
         else:
             self.show()
         
-
+        
+        
     #Updating the GUI periodically, called by timer. 
     #ToDo: Cleanup 
     def update_gui(self):
@@ -216,6 +234,8 @@ class Ui(QtWidgets.QWidget):
             self.SetMedSettingsButton.setEnabled(False)
             self.CancelMedSettingsButton.setEnabled(False)
             self.Start_Stop_Button.setStyleSheet("background-color : #f7751f ")  
+        self.showIpInTecConfig()
+        
     def checkSliderChanged(self):
         #ToDo. rewrite with local Variables and new sliders!
         changedStyle = """.QSlider {} 
@@ -245,15 +265,15 @@ class Ui(QtWidgets.QWidget):
         else:
             self.TExpHoldSlider.setStyleSheet(unchangedStyle)
 #             
-        if self.PEEPSlider.value() != self.Interface.getPeepPressure():
-            self.PEEPSlider.setStyleSheet(changedStyle)
+        if self.SliderPressurePeep.value() != self.Interface.getPeepPressure():
+            self.SliderPressurePeep.setStyleSheet(changedStyle)
         else:
-            self.PEEPSlider.setStyleSheet(unchangedStyle)
+            self.SliderPressurePeep.setStyleSheet(unchangedStyle)
             
-        if self.PLimitSlider.value() != self.Interface.getLimitPresssure():
-            self.PLimitSlider.setStyleSheet(changedStyle)
+        if self.SliderPressurePLimit.value() != self.Interface.getLimitPresssure():
+            self.SliderPressurePLimit.setStyleSheet(changedStyle)
         else:
-            self.PLimitSlider.setStyleSheet(unchangedStyle)
+            self.SliderPressurePLimit.setStyleSheet(unchangedStyle)
     #Paint Trinamic logo   
     def paintEvent(self, event):
         painter = QtGui.QPainter(self)
@@ -316,10 +336,10 @@ class Ui(QtWidgets.QWidget):
                 self.actualAMV = self.cycleMaxVolume*self.Freq*60*1000
     def getSettings(self):
         #Settings for Pressure Based Control 
-        self.PressureRiseTime  = self.Interface.getInhalationRiseTime()
-        self.PressureInspHoldTime = self.Interface.getInhalationPauseTime()
-        self.PressureExpFallTime = self.Interface.getExhalationFallTime()
-        self.PressureExpHoldTime = self.Interface.getExhalationPauseTime()
+        self.InspRiseTime  = self.Interface.getInhalationRiseTime()
+        self.InspHoldTime = self.Interface.getInhalationPauseTime()
+        self.ExpFallTime = self.Interface.getExhalationFallTime()
+        self.ExpHoldTime = self.Interface.getExhalationPauseTime()
         self.PressureLimit = self.Interface.getLimitPresssure()
         self.PressurePeep = self.Interface.getPeepPressure()
         self.CurrentMode  = self.Interface.getMode()
@@ -340,7 +360,7 @@ class Ui(QtWidgets.QWidget):
 
     def writeOverviewLabels(self):
         self.LabelVolume.setText(str(self.cycleMaxVolume)+"ml")
-        self.LabelAMV.setText(str("{:.2f}".format(self.actualAMV))+"ml/min")
+        self.LabelAMV.setText(str("{:.2f}".format(self.actualAMV/1000))+"l/min")
         self.LabelPMax.setText(str(max(self.pressureData))+"mbar")
         
     #function called when start/stop button pressed. Starting program or counting down to confirm stop            
@@ -405,21 +425,30 @@ class Ui(QtWidgets.QWidget):
             else:
                 self.showFullScreen()
 
-    #Function writes the setted MedSetting values on button press to module              
+    '''Function writes the setted MedSetting values on button press to module   '''           
     def writeMedSettings(self):
         self.Interface.setMode(self.StackedModes.currentIndex())
-        self.Freq = self.SliderPressureFreq.value()/(10*60*1000)
-        self.PressureIE =  self.SliderPressureInspExp.value()/50
-        self.PressureRiseTime = self.SliderPressureRiseTime.value()
-        self.PressureLimit = self.PLimitSlider.value()
-        self.PressurePeep = self.PEEPSlider.value()
-        
-        
+        #For pressure based settings
+        if self.StackedModes.currentIndex() == 0:
+            self.Freq = self.SliderPressureFreq.value()/(10*60*1000)
+            self.InspExp =  self.SliderPressureInspExp.value()/50
+            self.InspRiseTime = self.SliderPressureRiseTime.value()
+            self.PressureLimit = self.SliderPressurePLimit.value()
+            self.PressurePeep = self.SliderPressurePeep.value()
+        #For volume based settings
+        if self.StackedModes.currentIndex() == 1:
+            self.Freq = self.SliderVolumeFreq.value()/(10*60*1000)
+            self.InspExp =  self.SliderVolumeInspExp.value()/50
+            self.InspRiseTime = self.SliderVolumeRiseTime.value()
+            self.PressureLimit = self.SliderVolumePLimit.value()
+            self.PressurePeep = self.SliderVolumePeep.value()
+            self.Interface.setTargetVolume(self.SliderVolumeVT.value())
+            
         self.CalcPressTimes()
-        self.Interface.setInhalationRiseTime(int(self.PressureRiseTime))
-        self.Interface.setInhalationPauseTime(int(self.PressureInspHoldTime))
-        self.Interface.setExhalationFallTime(int(self.PressureExpFallTime))
-        self.Interface.setExhalationPauseTime(int(self.PressureExpHoldTime))
+        self.Interface.setInhalationRiseTime(int(self.InspRiseTime))
+        self.Interface.setInhalationPauseTime(int(self.InspHoldTime))
+        self.Interface.setExhalationFallTime(int(self.ExpFallTime))
+        self.Interface.setExhalationPauseTime(int(self.ExpHoldTime))
         self.Interface.setLimitPresssure(int(self.PressureLimit))
         self.Interface.setPeepPressure(int(self.PressurePeep))
         #Values on Overviewpage
@@ -432,12 +461,19 @@ class Ui(QtWidgets.QWidget):
         self.getSettings()
         self.CalcPressSettings()
         self.StackedModes.setCurrentIndex(self.CurrentMode)
-        self.SliderPressureInspExp.setValue(self.PressureIE*50)
+        #Set Slider for pressure control 
+        self.SliderPressureInspExp.setValue(self.InspExp*50)
         self.SliderPressureFreq.setValue(self.Freq*1000*10*60)
-        self.SliderPressureRiseTime.setValue(self.PressureRiseTime)
-        
-        self.PLimitSlider.setValue(self.Interface.getLimitPresssure())
-        self.PEEPSlider.setValue(self.Interface.getPeepPressure())
+        self.SliderPressureRiseTime.setValue(self.InspRiseTime)
+        self.SliderPressurePLimit.setValue(self.Interface.getLimitPresssure())
+        self.SliderPressurePeep.setValue(self.Interface.getPeepPressure())
+        #Set Slider for volume control
+        self.SliderVolumeInspExp.setValue(self.InspExp*50)
+        self.SliderVolumeFreq.setValue(self.Freq*1000*10*60)
+        self.SliderVolumeRiseTime.setValue(self.InspRiseTime)
+        self.SliderVolumePLimit.setValue(self.Interface.getLimitPresssure())
+        self.SliderVolumePeep.setValue(self.Interface.getPeepPressure())
+        self.SliderVolumeVT.setValue(self.Interface.getTargetVolume())
         #Set Labels  on overview page
         self.LabelPEEP.setText(str(self.Interface.getPeepPressure()/1000)+"mbar")
         self.LabelPLimit.setText(str(self.Interface.getLimitPresssure()/1000)+"mbar")
@@ -445,54 +481,55 @@ class Ui(QtWidgets.QWidget):
         print("Loaded Settings from board")
 
     def writeMedSettingsLabels(self):
-        self.LabelSetPressureInspExp.setText(str(self.SliderPressureInspExp.value()/50))
-        self.LabelSetPressureFreq.setText(str(self.SliderPressureFreq.value()/10)+"/min")
-        self.LabelSetPressureRiseTime.setText(str(self.SliderPressureRiseTime.value()/1000)+"s")
-        
-        self.LabelSetPEEP.setText(str(self.PEEPSlider.value()/1000)+"mbar")
-        self.LabelSetPLimit.setText(str(self.PLimitSlider.value()/1000)+"mbar")
-
-        self.Labelfreq.setText(str("{:.2f}".format(self.SliderPressureFreq.value()/10))+" /min")
+        #Pressure Settings
+        if self.StackedModes.currentIndex() == 0:
+            self.LabelSetPressureInspExp.setText(str(self.SliderPressureInspExp.value()/50))
+            self.LabelSetPressureFreq.setText(str(self.SliderPressureFreq.value()/10)+"/min")
+            self.LabelSetPressureRiseTime.setText(str(self.SliderPressureRiseTime.value()/1000)+"s")
+            self.LabelSetPressurePEEP.setText(str(self.SliderPressurePeep.value()/1000)+"mbar")
+            self.LabelSetPressurePLimit.setText(str(self.SliderPressurePLimit.value()/1000)+"mbar")
+            self.Labelfreq.setText(str("{:.2f}".format(self.SliderPressureFreq.value()/10))+" /min")
+        #Volume Settings
+        if self.StackedModes.currentIndex() == 1:
+            self.LabelSetVolumeInspExp.setText(str(self.SliderVolumeInspExp.value()/50))
+            self.LabelSetVolumeFreq.setText(str(self.SliderVolumeFreq.value()/10)+"/min")
+            self.LabelSetVolumeRiseTime.setText(str(self.SliderVolumeRiseTime.value()/1000)+"s")
+            self.LabelSetVolumePEEP.setText(str(self.SliderVolumePeep.value()/1000)+"mbar")
+            self.LabelSetVolumePLimit.setText(str(self.SliderVolumePLimit.value()/1000)+"mbar")
+            self.LabelSetVolumeVT.setText(str(self.SliderVolumeVT.value()))
+            self.Labelfreq.setText(str("{:.2f}".format(self.SliderVolumeFreq.value()/10))+" /min")
     def NullFlowSensor(self):
         self.Interface.ZeroFlowSensor()
         return
     
     def CalcPressTimes(self):
-        TInsp = (1/self.Freq)/(1+(1/self.PressureIE))
+        TInsp = (1/self.Freq)/(1+(1/self.InspExp))
         TExp  = (1/self.Freq)-TInsp
-        if TInsp >= self.PressureRiseTime:
-            self.PressureInspHoldTime = TInsp-self.PressureRiseTime 
+        if TInsp >= self.InspRiseTime:
+            self.InspHoldTime = TInsp-self.InspRiseTime 
         else: 
             #ToDo: Insert Error
             print("Settings not valid. Pressure ramp longer than inspiration time")
-            self.PressureRiseTime = TInsp 
-            self.PressureInspHoldTime = 0
+            self.InspRiseTime = TInsp 
+            self.InspHoldTime = 0
 
-        if TExp >= self.PressureExpFallTime:
-            self.PressureExpHoldTime = TExp-self.PressureExpFallTime 
+        if TExp >= self.ExpFallTime:
+            self.ExpHoldTime = TExp-self.ExpFallTime 
         else: 
             #ToDo: Insert Error
             print("Settings not valid. Expiration time to short")
-            self.PressureExpHoldTime = 0
-            self.Freq = 1/(TInsp+self.PressureExpFallTime) 
-        print("Times:")
-        print(self.PressureRiseTime)
-        print(self.PressureInspHoldTime)
-        print(self.PressureExpFallTime)
-        print(self.PressureExpHoldTime)
+            self.ExpHoldTime = 0
+            self.Freq = 1/(TInsp+self.ExpFallTime) 
         self.CalcPressSettings()
     
     def CalcPressSettings(self):
-        T = self.PressureRiseTime+self.PressureInspHoldTime+self.PressureExpFallTime+self.PressureExpHoldTime
+        T = self.InspRiseTime+self.InspHoldTime+self.ExpFallTime+self.ExpHoldTime
         if T != 0:
             self.Freq = 1/T
         else:
             #ToDo:  Insert Error 
             return 
-        self.PressureIE = (self.PressureRiseTime+self.PressureInspHoldTime)/(self.PressureExpFallTime+self.PressureExpHoldTime)
-        print("What should be set")
-        print(self.Freq)
-        print(self.PressureIE)
+        self.InspExp = (self.InspRiseTime+self.InspHoldTime)/(self.ExpFallTime+self.ExpHoldTime)
         
         
     #Find Max in last cycle 
@@ -511,7 +548,13 @@ class Ui(QtWidgets.QWidget):
     def changeStackedModes(self):
         self.StackedModes.setCurrentIndex(self.ModeDropdown.currentIndex())
         
-
+    def showIpInTecConfig(self):
+        try: 
+            hostName = socket.gethostname()
+            ip = socket.gethostbyname(hostName)
+            self.LabelIpAddress.setText(str(hostName) +"    "+ str(ip))
+        except:
+            self.LabelIpAddress.setText('No Network')
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)

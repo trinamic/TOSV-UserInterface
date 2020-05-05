@@ -13,7 +13,7 @@ from modules.TMC4671_TMC6100_TOSV_REF import TMC4671_TMC6100_TOSV_REF
 #ToDo: detect when connection drops. 
 class TOSV_Interface:
     def __init__(self):
-        port = "COM20"#"/dev/ttyS0" #Change for different Interface type
+        port = "/dev/ttyS0" #Change for different Interface type
         #port = "/dev/ttyS0" #Change for different Interface type
         interface = "serial_tmcl"
         datarate = "115200"
@@ -163,14 +163,24 @@ class TOSV_Interface:
         except: 
             self.connected = False 
             print("Connection Error: setPeepPressure")
-    
+    def setTargetVolume(self, value):
+        try:
+            self.module.setAxisParameter(self.module.APs.TosvTargetVolume, value)
+        except: 
+            self.connected = False 
+            print("Connection Error: TosvTargetVolume")
     def getCurrentState(self):
         try:
             return self.module.axisParameter(self.module.APs.TosvState)
         except: 
             self.connected = False 
             print("Connection Error: TosvState")       
-            
+    def getTargetVolume(self):
+        try:
+            return self.module.axisParameter(self.module.APs.TosvTargetVolume)
+        except: 
+            self.connected = False 
+            print("Connection Error: TosvTargetVolume")            
             
     def getInhalationRiseTime(self):
         try:
