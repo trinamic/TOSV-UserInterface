@@ -66,7 +66,7 @@ class TOSV_Interface:
         except: 
             print("closing connection failed... was a connection open?")
 
-    def getBoardReading(self, Parameter):
+    def getBoardParameter(self, Parameter):
         try: 
             APsParam = getattr(self.module.APs, Parameter)
             return self.module.axisParameter(APsParam)
@@ -91,7 +91,7 @@ class TOSV_Interface:
             
     # read actual pressure from board
     def getActualPressure(self):
-        self.getBoardReading("ActualPressure")
+        return self.getBoardParameter("ActualPressure")
 
     # read actual flow from board
     def getActualFlow(self):
@@ -108,62 +108,11 @@ class TOSV_Interface:
             print("Connection Error: getActualVolume")
             
     def getStatus(self):
-        enabled = self.getBoardReading("TosvEnable")
+        enabled = self.getBoardParameter("TosvEnable")
         if enabled == 1:
             return True
         else:
             return False
-            
-    def setInhalationRiseTime(self,value):
-        self.setBoardParameter("TosvInhalationRiseTime", value)
-            
-    def setInhalationPauseTime(self, value):
-        self.setBoardParameter("TosvInhalationPauseTime", value)
-            
-    def setExhalationFallTime(self, value):
-        self.setBoardParameter("TosvExhalationFallTime", value)
-            
-    def setExhalationPauseTime(self, value):
-        self.setBoardParameter("TosvExhalationPauseTime", value)
-        
-    def setMode(self, value):
-        self.setBoardParameter("TosvMode", value)
-        
-    def setLimitPresssure(self, value):
-        self.setBoardParameter("TosvLimitPresssure", value)
-            
-    def setPeepPressure(self, value):
-        self.setBoardParameter("TosvPeepPressure", value)
-        
-    def setTargetVolume(self, value):
-        self.setBoardParameter("TosvTargetVolume", value)
-        
-    def getCurrentState(self):
-        return self.getBoardReading("TosvState")
-        
-    def getTargetVolume(self):
-        return self.getBoardReading("TosvTargetVolume")      
-            
-    def getInhalationRiseTime(self):
-        return self.getBoardReading("TosvInhalationRiseTime")
-            
-    def getInhalationPauseTime(self):
-        return self.getBoardReading("TosvInhalationPauseTime")
-            
-    def getExhalationFallTime(self):
-        return self.getBoardReading("TosvExhalationFallTime")
-            
-    def getExhalationPauseTime(self):
-        return self.getBoardReading("TosvExhalationPauseTime")
-            
-    def getLimitPresssure(self):
-        return self.getBoardReading("TosvLimitPresssure")
-            
-    def getPeepPressure(self):
-        return self.getBoardReading("TosvPeepPressure")
-        
-    def getMode(self):
-        return self.getBoardReading("TosvMode")
         
     def ZeroFlowSensor(self):
         self.setBoardParameter("ZeroFlowSensor", 0)

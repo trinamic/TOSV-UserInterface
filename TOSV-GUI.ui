@@ -103,7 +103,7 @@ background: rgb(0, 105, 180);
       <enum>QTabWidget::Rounded</enum>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <property name="iconSize">
       <size>
@@ -278,7 +278,7 @@ border: 1px solid black;}
         </layout>
        </item>
        <item>
-        <layout class="QVBoxLayout" name="verticalLayout_2" stretch="1,0,1,0,1,0,1,0,1,0,1,0">
+        <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,1,0,1,0,1,0,1,0,1,0,1,0">
          <property name="spacing">
           <number>9</number>
          </property>
@@ -297,6 +297,13 @@ border: 1px solid black;}
          <property name="bottomMargin">
           <number>9</number>
          </property>
+         <item>
+          <widget class="QLabel" name="LabelMode">
+           <property name="text">
+            <string>Mode</string>
+           </property>
+          </widget>
+         </item>
          <item>
           <widget class="QLabel" name="label_8">
            <property name="text">
@@ -498,7 +505,7 @@ border: 1px solid black;}*/
          </property>
          <property name="font">
           <font>
-           <pointsize>11</pointsize>
+           <pointsize>14</pointsize>
           </font>
          </property>
          <item>
@@ -519,22 +526,7 @@ border: 1px solid black;}*/
           <number>1</number>
          </property>
          <widget class="QWidget" name="pressure_settings">
-          <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="1,1,1,0,1,1">
-           <property name="spacing">
-            <number>6</number>
-           </property>
-           <property name="leftMargin">
-            <number>9</number>
-           </property>
-           <property name="topMargin">
-            <number>9</number>
-           </property>
-           <property name="rightMargin">
-            <number>9</number>
-           </property>
-           <property name="bottomMargin">
-            <number>1</number>
-           </property>
+          <layout class="QHBoxLayout" name="horizontalLayout_3">
            <item>
             <layout class="QVBoxLayout" name="verticalLayout_3" stretch="0,0,0">
              <property name="leftMargin">
@@ -906,7 +898,7 @@ border: 1px solid black;}*/
               <number>0</number>
              </property>
              <item>
-              <widget class="QSlider" name="SliderPressurePLimit">
+              <widget class="QSlider" name="SliderPressurePInsp">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                  <horstretch>0</horstretch>
@@ -942,12 +934,110 @@ border: 1px solid black;}*/
              <item>
               <widget class="QLabel" name="label_5">
                <property name="text">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;right&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;P&lt;/span&gt;&lt;span style=&quot; font-size:12pt; vertical-align:sub;&quot;&gt;Limit &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;right&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;P&lt;/span&gt;&lt;span style=&quot; font-size:12pt; vertical-align:sub;&quot;&gt;Insp &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
               </widget>
              </item>
              <item>
               <widget class="QLabel" name="SetPressurePLimitLabel">
+               <property name="font">
+                <font>
+                 <family>Open Sans</family>
+                 <pointsize>8</pointsize>
+                </font>
+               </property>
+               <property name="styleSheet">
+                <string notr="true"/>
+               </property>
+               <property name="text">
+                <string>---</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+               <property name="openExternalLinks">
+                <bool>false</bool>
+               </property>
+               <property name="textInteractionFlags">
+                <set>Qt::LinksAccessibleByMouse|Qt::TextEditable</set>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout_9">
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
+             <item>
+              <widget class="QSlider" name="SliderPressureASBTrigger">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">.QSlider {
+}
+
+.QSlider::groove:vertical {
+    border: 1px solid #262626;
+    width: 5px;
+  	 background: rgb(255, 255, 255) ;
+    margin: 0 12px;
+}
+
+.QSlider::handle:vertical {
+    background:#afb3b6 ;
+    border: 1px solid rgb(0, 0, 0);
+    height: 30px;
+    margin: -0px -35px;
+}</string>
+               </property>
+               <property name="maximum">
+                <number>6000</number>
+               </property>
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="label_7">
+               <property name="text">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;right&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;ASB-Trigger&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="checkBoxPressureASBEnabled">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>10</height>
+                </size>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">QCheckBox::indicator { width: 20px; height: 20px;}</string>
+               </property>
+               <property name="text">
+                <string>Enabled</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="LabelSetPressureASB">
                <property name="font">
                 <font>
                  <family>Open Sans</family>
@@ -1197,7 +1287,7 @@ border: 1px solid black;}*/
                 <number>1</number>
                </property>
                <property name="maximum">
-                <number>5000</number>
+                <number>2000</number>
                </property>
                <property name="orientation">
                 <enum>Qt::Vertical</enum>
@@ -1469,12 +1559,110 @@ border: 1px solid black;}*/
              <item>
               <widget class="QLabel" name="label_25">
                <property name="text">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;right&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;P&lt;/span&gt;&lt;span style=&quot; font-size:12pt; vertical-align:sub;&quot;&gt;Limit &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;right&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;P&lt;/span&gt;&lt;span style=&quot; font-size:12pt; vertical-align:sub;&quot;&gt;Limit&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
               </widget>
              </item>
              <item>
               <widget class="QLabel" name="SetVolumePLimitLabel">
+               <property name="font">
+                <font>
+                 <family>Open Sans</family>
+                 <pointsize>8</pointsize>
+                </font>
+               </property>
+               <property name="styleSheet">
+                <string notr="true"/>
+               </property>
+               <property name="text">
+                <string>---</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+               <property name="openExternalLinks">
+                <bool>false</bool>
+               </property>
+               <property name="textInteractionFlags">
+                <set>Qt::LinksAccessibleByMouse|Qt::TextEditable</set>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout_13">
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
+             <item>
+              <widget class="QSlider" name="SliderVolumeASBTrigger">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">.QSlider {
+}
+
+.QSlider::groove:vertical {
+    border: 1px solid #262626;
+    width: 5px;
+  	 background: rgb(255, 255, 255) ;
+    margin: 0 12px;
+}
+
+.QSlider::handle:vertical {
+    background:#afb3b6 ;
+    border: 1px solid rgb(0, 0, 0);
+    height: 30px;
+    margin: -0px -35px;
+}</string>
+               </property>
+               <property name="maximum">
+                <number>6000</number>
+               </property>
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="label_15">
+               <property name="text">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;right&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;ASB-Trigger&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="checkBoxVolumeASBEnabled">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>10</height>
+                </size>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">QCheckBox::indicator { width: 20px; height: 20px;}</string>
+               </property>
+               <property name="text">
+                <string>Enabled</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="LabelSetVolumeASB">
                <property name="font">
                 <font>
                  <family>Open Sans</family>
@@ -1829,6 +2017,40 @@ border: 1px solid black;}*/
        </item>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_7">
+         <item>
+          <widget class="QLabel" name="label_3">
+           <property name="text">
+            <string>FPS: </string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="LabelFrameRate">
+           <property name="text">
+            <string>Frame Rate</string>
+           </property>
+           <property name="textInteractionFlags">
+            <set>Qt::LinksAccessibleByMouse|Qt::TextEditable</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_4">
+           <property name="text">
+            <string>Data Update Time</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="DataUpdateRate">
+           <property name="text">
+            <string>Data Time</string>
+           </property>
+           <property name="textInteractionFlags">
+            <set>Qt::LinksAccessibleByMouse|Qt::TextEditable</set>
+           </property>
+          </widget>
+         </item>
          <item>
           <spacer name="horizontalSpacer_10">
            <property name="orientation">

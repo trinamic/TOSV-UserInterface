@@ -82,7 +82,7 @@ class TMC4671_TMC6100_TOSV_REF(object):
         print("\tInhalation pause time: " + str(self.axisParameter(self.APs.TosvInhalationPauseTime)))
         print("\tExhalation fall time:  " + str(self.axisParameter(self.APs.TosvExhalationFallTime)))
         print("\tExhalation pause time: " + str(self.axisParameter(self.APs.TosvExhalationPauseTime)))
-        print("\tLIMIT pressure: " + str(self.axisParameter(self.APs.TosvLimitPresssure)))
+        print("\tLIMIT pressure: " + str(self.axisParameter(self.APs.TosvLimitPressure)))
         print("\tPEEP pressure:  " + str(self.axisParameter(self.APs.TosvPeepPressure)))
         
     def stateToName(self, i):
@@ -168,13 +168,18 @@ class _APs():
     TosvInhalationPauseTime     = 105
     TosvExhalationFallTime      = 106
     TosvExhalationPauseTime     = 107
-    TosvLimitPresssure          = 108
+    TosvLimitPressure           = 108
     TosvPeepPressure            = 109
     ActualFlow                  = 110
     ZeroFlowSensor              = 111
     TargetVolume                = 112
     ActualVolume                = 113
     MaxVolume                   = 114
+    
+    ASBenable                   = 120
+    ASBThreshold                = 121
+    
+    ReInitFlowSensor            = 130
     
     DebugValue0                 = 240
     DebugValue1                 = 241
