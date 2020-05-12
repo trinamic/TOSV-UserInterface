@@ -102,6 +102,9 @@ class TMC4671_TMC6100_TOSV_REF(object):
                 1:'Volume Mode'
         }
         return switcher.get(i,"Invalid state")
+    def reboot(self):
+        self.connection.send(255, 0, 0, 1234)
+        
 class _APs():
     " motor control parameter "
     StatusFlags                 = 0

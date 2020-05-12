@@ -11,11 +11,13 @@ import numpy
 import time
 import multiprocessing
 import netifaces as ni
+import socket
 
-from PyQt5 import QtWidgets, uic, QtCore, QtGui
+from PyQt5 import QtWidgets, uic, QtCore, QtGui, Qt
 import pyqtgraph 
 
 from TOSV_Interface import TOSV_Interface
+from AlarmHandler import *
 #from winreg import SetValue
 
 #Set to True in for fullscreen 
@@ -26,7 +28,8 @@ class Ui(QtWidgets.QWidget):
         super(Ui, self).__init__()
         uic.loadUi('TOSV-GUI.ui', self)
         self.Interface = TOSV_Interface()
-        self.updatetime = 50        
+        self.updatetime = 50   
+        self.rebootcounter = 0     
                 
         #Define Varibles for VolumeGraph 
         #self.maxDataPoints = 12*60*60*(1000/self.updatetime)#For aprox. 12h of data record
@@ -49,6 +52,7 @@ class Ui(QtWidgets.QWidget):
         self.actualFlow  = 0
         self.currentState = 0
         self.cycleFreq = 0
+        
         
         self.cycleMaxVolume = 0
         self.actualAMV = 0
@@ -92,7 +96,10 @@ class Ui(QtWidgets.QWidget):
         self.DisconnectButton = self.findChild(QtWidgets.QPushButton, 'DisconnectButton')
         self.SetMedSettingsButton = self.findChild(QtWidgets.QPushButton, 'SetMedSettingsButton')
         self.CancelMedSettingsButton = self.findChild(QtWidgets.QPushButton, 'CancelMedSettingsButton')
+        self.ClearAlarmButton = self.findChild(QtWidgets.QPushButton, 'ClearAlarmButton')
         self.NullFlowsensorButton = self.findChild(QtWidgets.QPushButton, 'NullFlowsensorButton')
+        self.RebootModuleButton = self.findChild(QtWidgets.QPushButton, 'RebootModuleButton')
+        
         self.ModeDropdown = self.findChild(QtWidgets.QComboBox, 'ModeDropDown')
         self.StackedModes = self.findChild(QtWidgets.QStackedWidget, 'ModeSettings')
         self.TabWidget = self.findChild(QtWidgets.QTabWidget, 'tabWidget')
@@ -102,7 +109,6 @@ class Ui(QtWidgets.QWidget):
         self.CancelButton.hide()
         self.DisconnectButton.hide()
         self.ConnectButton.hide()
-    
         #Define Button clicks    
         self.Start_Stop_Button.pressed.connect(self.start_Stop_Button_pressed)
         self.Start_Stop_Button.released.connect(self.start_Stop_Button_released)
@@ -114,6 +120,9 @@ class Ui(QtWidgets.QWidget):
         self.CancelMedSettingsButton.clicked.connect(self.clearMedChanges)
         
         self.NullFlowsensorButton.clicked.connect(self.NullFlowSensor)
+        self.RebootModuleButton.clicked.connect(self.rebootModule)
+        
+        self.ClearAlarmButton.clicked.connect(self.ClearAlarms)
         
         self.ModeDropdown.currentIndexChanged.connect(self.changeStackedModes)
         #Buttons are disabled
@@ -165,7 +174,7 @@ class Ui(QtWidgets.QWidget):
         self.LabelSetVolumePLimit = self.findChild(QtWidgets.QLabel, 'SetVolumePLimitLabel')
         self.LabelSetVolumeASB = self.findChild(QtWidgets.QLabel, 'LabelSetVolumeASB')
 
-        self.LabelIpAddress = self.findChild(QtWidgets.QLabel, 'LabelIpAddress')
+        #self.LabelIpAddress = self.findChild(QtWidgets.QLabel, 'LabelIpAddress')
         self.LabelFrameRate = self.findChild(QtWidgets.QLabel, 'LabelFrameRate')
         self.LabelDataUpdateRate = self.findChild(QtWidgets.QLabel, 'DataUpdateRate')
         #Setting up Graphs
@@ -189,13 +198,14 @@ class Ui(QtWidgets.QWidget):
         self.PressureGraph.showGrid(x=True, y=True)
         self.PressureGraphxaxis = self.PressureGraph.getAxis('bottom')
         self.PressureGraph.setMouseEnabled(x=False, y= False)
-        #Define Timers
+        '''Alarms'''
+        self.AlarmTable = self.findChild(QtWidgets.QTableView, 'AlarmTable')
+        self.Alarm = AlarmHandler()
+        '''Timers'''
         #Timer for long button press
         self.timer_start_stop_button = QtCore.QTimer()
         self.timer_start_stop_button.setSingleShot(True)
         self.timer_start_stop_button.timeout.connect(self.confirm_stop)
-        
-        '''Timers'''
         #Timer for refreshing GUI
         self.timer_gui = QtCore.QTimer()
         self.timer_gui.timeout.connect(self.update_gui)
@@ -208,7 +218,6 @@ class Ui(QtWidgets.QWidget):
         self.timer_reconnect = QtCore.QTimer()
         self.timer_reconnect.timeout.connect(self.reconnect)
         self.timer_reconnect.start(1000) #Dont set to low.. otherwise the connection will fail
-        
         
         #Show Window, depending on Fullscreen setting. 
         self.setWindowTitle('TOSV UserInterface')
@@ -225,6 +234,8 @@ class Ui(QtWidgets.QWidget):
     #ToDo: Cleanup 
     def update_gui(self):
         starttime = time.time()
+        
+        #self.AlarmTable.showGrid()
         if self.Interface.isConnected() == True:
             self.SetMedSettingsButton.setEnabled(True)
             self.CancelMedSettingsButton.setEnabled(True)
@@ -237,9 +248,11 @@ class Ui(QtWidgets.QWidget):
             if self.TabWidget.currentIndex() == 1: 
                 self.checkSliderChanged()
                 self.writeMedSettingsLabels()
-
-
-            #Setting            
+                            
+            if self.TabWidget.currentIndex() == 2:
+                model = self.Alarm.AlarmTable()
+                self.AlarmTable.setModel(model)
+                            
             if self.running == True:
                 if self.timer_start_stop_button.isActive() == True:
                     self.Start_Stop_Button.setText(str(self.timer_start_stop_button.remainingTime()))
@@ -257,10 +270,14 @@ class Ui(QtWidgets.QWidget):
             self.Start_Stop_Button.setText("NO MODULE")
             self.SetMedSettingsButton.setEnabled(False)
             self.CancelMedSettingsButton.setEnabled(False)
-            self.Start_Stop_Button.setStyleSheet("background-color : #f7751f ")  
-        self.showIpInTecConfig()
+            self.Start_Stop_Button.setStyleSheet("background-color : #f7751f ")
+            self.showIpInTecConfig()
+            
         cycletime = time.time()-starttime
-        self.LabelFrameRate.setText(str("{:.2f}".format(1/cycletime)))
+        if cycletime > 2/1000:
+            self.LabelFrameRate.setText(str("{:.2f}".format(1/cycletime)))
+        else: 
+            self.LabelFrameRate.setText('>500')
         
     def getValues(self):
         if self.Interface.isConnected() == True:
@@ -308,7 +325,6 @@ class Ui(QtWidgets.QWidget):
                 if findmax:
                     self.cycleMaxVolume=findmax
                     self.actualAMV = self.cycleMaxVolume*self.Freq*60*1000
-                    
             cycletime = time.time()-starttime
             if cycletime != 0:
                 self.LabelDataUpdateRate.setText(str("{:.2f}".format(1/cycletime)))        
@@ -524,6 +540,17 @@ class Ui(QtWidgets.QWidget):
                 self.clearMedChanges()
                 self.wasconnected = True
                 
+                for x in range(10):
+                    self.getValues()
+                    if self.actualFlow != 0:
+                        break
+                
+                else:
+                    self.Alarm.newAlarm('Internal', 'Error: Flow Sensor, rebooting TOSV')
+                    if self.running == False:
+                        self.rebootModule()
+                    
+                
     def keyPressEvent(self, event):
         if event.key() == QtCore.Qt.Key_F11:
             if self.windowState() & QtCore.Qt.WindowFullScreen:
@@ -644,8 +671,7 @@ class Ui(QtWidgets.QWidget):
         if TInsp >= self.InspRiseTime:
             self.InspHoldTime = TInsp-self.InspRiseTime 
         else: 
-            #ToDo: Insert Error
-            print("Settings not valid. Pressure ramp longer than inspiration time")
+            self.Alarm.newAlarm('MedSettings', 'Pressure ramp longer than inspiration time')
             self.InspRiseTime = TInsp 
             self.InspHoldTime = 0
 
@@ -653,7 +679,7 @@ class Ui(QtWidgets.QWidget):
             self.ExpHoldTime = TExp-self.ExpFallTime 
         else: 
             #ToDo: Insert Error
-            print("Settings not valid. Expiration time to short")
+            self.Alarm.newAlarm('MedSettings', 'Expiration time to short')
             self.ExpHoldTime = 0
             self.Freq = 1/(TInsp+self.ExpFallTime) 
         self.CalcPressSettings()
@@ -683,14 +709,34 @@ class Ui(QtWidgets.QWidget):
     
     def changeStackedModes(self):
         self.StackedModes.setCurrentIndex(self.ModeDropdown.currentIndex())
-        
+        return 
+    
+    def ClearAlarms(self):
+        self.Alarm.clearAll()
+        return
+     
     def showIpInTecConfig(self):
-        try: 
-            ip = ni.ifaddresses('eth0')[ni.AF_INET][0]['addr']
+        try:
+            ip = ((([ip for ip in socket.gethostbyname_ex(socket.gethostname())[2] if not ip.startswith("127.")] or [[(s.connect(("8.8.8.8", 53)), s.getsockname()[0], s.close()) for s in [socket.socket(socket.AF_INET, socket.SOCK_DGRAM)]][0][1]]) + ["no IP found"])[0])
             self.LabelIpAddress.setText(str(ip))
         except:
             self.LabelIpAddress.setText('No Network')
-
+              
+    def rebootModule(self):
+        self.Interface.reboot()
+        for x in range(self.maxDataPoints):
+            initTime = time.time()- (self.maxDataPoints-(x+1))*50/1000
+            self.volumeData[x] = 0
+            self.volumeTimeData[x] = initTime
+            self.flowData[x] = 0
+            self.flowTimeData[x]= initTime
+            self.pressureData[x] =  0
+            self.pressureTimeData[x] = initTime
+            self.stateData[x] =  0
+            self.stateTimeData[x] = initTime
+        time.sleep(0.3)
+        self.NullFlowSensor()
+        
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     #app.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)

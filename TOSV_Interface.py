@@ -21,7 +21,7 @@ class TOSV_Interface:
         arg= f"--interface {interface} --port {port} --data-rate {datarate}" 
         print(arg)
         self.connectionManager = ConnectionManager(arg.split())
-        self.connected = True 
+        self.connected = False  
 
     #Try to establish connection
     def connect(self):
@@ -116,3 +116,7 @@ class TOSV_Interface:
         
     def ZeroFlowSensor(self):
         self.setBoardParameter("ZeroFlowSensor", 0)
+    
+    def reboot(self):
+        self.module.connection.send(255, 0, 0, 1234)
+        self.connected = False
