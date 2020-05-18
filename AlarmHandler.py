@@ -3,38 +3,47 @@
 Created on 11.05.2020
 
 @author: jh
+This file is part of TOSV project. 
+This should just be an inspiration or starting point for further development. 
+A basic handler for alarms is implemented. 
 '''
 import time
-from time import gmtime, strftime
+from time import strftime
 from PyQt5 import QtCore
 import pandas
 
+maxAlarms = 10
 
 class AlarmHandler:
     def __init__(self):
-        self.Alarm =  list()
-        self.maxAlarms = 50 
         self.AlarmList = list()
-        self.newAlarm("System","AlarmSystem initialised", True)
+        for x in range(maxAlarms):
+            self.AlarmList.append(['', True, '',''])
+    '''Init new alarm'''
     def newAlarm(self, Topic, Text, Status = False):
-        self.Alarm.clear()
-        self.Alarm.append(strftime("%a, %d %b %Y %H:%M:%S"))
-        self.Alarm.append(Status)
-        self.Alarm.append(Topic)
-        self.Alarm.append(Text)
-        self.AlarmList.append(self.Alarm)
-        if len(self.AlarmList) > self.maxAlarms:
-            self.AlarmList.pop(0)
-            
+        Alarm =  list()  #Time, State, Topic, Text
+        Alarm.append(strftime("%a, %d %b %Y %H:%M:%S"))
+        Alarm.append(Status)
+        Alarm.append(Topic)
+        Alarm.append(Text)
+        if Alarm[1:3] == self.lastAlarm()[1:3]: #avoid spamming 
+            self.AlarmList[0] = Alarm
+        else:
+            self.AlarmList.insert(0, Alarm)
+        if len(self.AlarmList) > maxAlarms:
+            self.AlarmList.pop(maxAlarms)
+    '''set alarm to cleared '''
     def clearAlarm(self, Index):
-        return
-    def lastAlarm(self):
-        leng = len(self.AlarmList)
-        return  self.AlarmList[leng-1]
+        self.AlarmList[Index][1] = True
+    '''set all alarms to cleared '''
     def clearAll(self):
         leng = len(self.AlarmList)
         for x in range(leng):
             self.AlarmList[x][1] = True
+        
+    def lastAlarm(self):
+        return  self.AlarmList[0]
+    '''returns table model to display in UI'''
     def AlarmTable(self):
         data = pandas.DataFrame(self.AlarmList, columns = ['Time', 'Cleared', 'Topic', 'Description'])
         model = TableModel(data)

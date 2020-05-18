@@ -3,6 +3,9 @@
 Created on 14.04.2020
 
 @author: jh
+This file is part of TOSV project.  
+This should just be an inspiration or starting point for further development. 
+Handles connection with the board via PyTrinamic
 '''
 from PyTrinamic.connections.ConnectionManager import ConnectionManager
 import threading
@@ -15,7 +18,6 @@ class TOSV_Interface:
     def __init__(self):
         port = "COM20"#"/dev/ttyS0" #Change for different Interface type
         #port = "COM8"#"/dev/ttyS0" #Change for different Interface type
-        #port = "/dev/ttyS0" #Change for different Interface type
         interface = "serial_tmcl"
         datarate = "115200"
         arg= f"--interface {interface} --port {port} --data-rate {datarate}" 
@@ -23,7 +25,7 @@ class TOSV_Interface:
         self.connectionManager = ConnectionManager(arg.split())
         self.connected = False  
 
-    #Try to establish connection
+    '''Try to establish connection. Threading is used to avoid crashes on failed connections'''
     def connect(self):
         try:    
             try:
@@ -31,20 +33,18 @@ class TOSV_Interface:
             finally:
                 self.myInterface = self.connectionManager.connect()
                 try:
-                    self.setUpThread = threading.Thread(target=self.setUpMotor) #Using Thread to deal with connection errors
+                    self.setUpThread = threading.Thread(target=self.setUpMotor)
                     self.setUpThread.start()
-                    self.module = self.setUpThread.result()
                     print("Connected")
                 except:
                     print("could not connect, module")
         except:
             print("could not connect, interface")
     
-    #returns if board is connected
     def isConnected(self):
         return self.connected
 
-    #set up Motor parameters, now in test setup with TMCC_160
+    '''set up Motor parameters'''
     def setUpMotor(self):
         self.module = TMC4671_TMC6100_TOSV_REF(self.myInterface)
         self.module.showMotorConfiguration()
@@ -57,7 +57,6 @@ class TOSV_Interface:
         self.connected = True
         return self.module
     
-    #disconnect 
     def disconnect(self):
         try:
             self.myInterface.close()
@@ -66,6 +65,7 @@ class TOSV_Interface:
         except: 
             print("closing connection failed... was a connection open?")
 
+    '''get parameters from Board'''
     def getBoardParameter(self, Parameter):
         try: 
             APsParam = getattr(self.module.APs, Parameter)
@@ -73,6 +73,7 @@ class TOSV_Interface:
         except: 
             self.connected = False 
             print(f"Connection Error: {Parameter} could not be read")
+    '''write parameters to board'''
     def setBoardParameter(self, Parameter, value):
         try: 
             APsParam = getattr(self.module.APs, Parameter)
@@ -116,7 +117,8 @@ class TOSV_Interface:
         
     def ZeroFlowSensor(self):
         self.setBoardParameter("ZeroFlowSensor", 0)
-    
+        
+    '''reboot module '''
     def reboot(self):
         self.module.connection.send(255, 0, 0, 1234)
         self.connected = False

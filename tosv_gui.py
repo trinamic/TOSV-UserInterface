@@ -4,36 +4,40 @@
 Created on 14.04.2020
 
 @author: jh
+This file is part of TOSV project it contains the main part of the User Interface for the TOSV Reference Board.
+This should just be an inspiration or starting point for further development. 
+
 '''
 #Imports
 import sys
 import numpy
-import time
-import multiprocessing
-import netifaces as ni
 import socket
 
-from PyQt5 import QtWidgets, uic, QtCore, QtGui, Qt
+from PyQt5 import QtWidgets, uic, QtCore, QtGui
 import pyqtgraph 
+import time
 
 from TOSV_Interface import TOSV_Interface
-from AlarmHandler import *
-#from winreg import SetValue
+from AlarmHandler import AlarmHandler
+from SelfCheck import SelfCheck
 
 #Set to True in for fullscreen 
 fullscreen = False 
+updatetime = 50   
 
+'''Main UI class.'''
 class Ui(QtWidgets.QWidget):
+    
+    '''Init UI and variables'''
     def __init__(self):
         super(Ui, self).__init__()
         uic.loadUi('TOSV-GUI.ui', self)
+        '''Init objects '''
         self.Interface = TOSV_Interface()
-        self.updatetime = 50   
-        self.rebootcounter = 0     
-                
-        #Define Varibles for VolumeGraph 
-        #self.maxDataPoints = 12*60*60*(1000/self.updatetime)#For aprox. 12h of data record
-        self.maxDataPoints = int(10*(1000/self.updatetime))
+        self.Alarm = AlarmHandler()
+        self.SelfCheck = SelfCheck(self.Alarm)
+        '''Init  data structures to save data'''
+        self.maxDataPoints = int(10*(1000/updatetime))
 
         self.volumeData = list()
         self.volumeTimeData = list()
@@ -47,18 +51,20 @@ class Ui(QtWidgets.QWidget):
         self.stateData = list()
         self.stateTimeData = list()
         
+        self.RPMData = list()
+        self.RPMTimeData = list()
+        
         self.actualPressure = 0 
         self.actualVolume = 0
         self.actualFlow  = 0
+        self.actualRPM = 0
         self.currentState = 0
         self.cycleFreq = 0
-        
         
         self.cycleMaxVolume = 0
         self.actualAMV = 0
         print("maxDataPoints: " + str(self.maxDataPoints))
         
-        #init values
         for x in range(self.maxDataPoints):
             initTime = time.time()- (self.maxDataPoints-(x+1))*50/1000
             self.volumeData.append(0)
@@ -69,9 +75,13 @@ class Ui(QtWidgets.QWidget):
             self.pressureTimeData.append(initTime)
             self.stateData.append(0)
             self.stateTimeData.append(initTime)
+            self.RPMData.append(0)
+            self.RPMTimeData.append(initTime)
         
+         
         #Buffer and Used Variables.  
         self.running = False
+        self.RunningSince = time.time()
         self.wasconnected = False
         
         self.CurrentMode = 0
@@ -87,8 +97,11 @@ class Ui(QtWidgets.QWidget):
         self.ASBenable = 0
         self.ASBThreshold = 0
         self.TargetVT = 0
-
-        #Define Buttons
+        
+        self.Data = [self.volumeData, self.volumeTimeData, self.flowData, self.flowTimeData, self.pressureData, self.pressureTimeData, self.stateData, self.stateTimeData, self.RPMData, self.RPMTimeData, self.cycleMaxVolume]
+        self.Settings = list()
+        
+        '''Define Buttons '''
         self.ConnectButton = self.findChild(QtWidgets.QPushButton, 'ConnectButton')
         self.Start_Stop_Button = self.findChild(QtWidgets.QPushButton, 'StartButton')
         self.StopButton = self.findChild(QtWidgets.QPushButton, 'StopButton')
@@ -99,11 +112,6 @@ class Ui(QtWidgets.QWidget):
         self.ClearAlarmButton = self.findChild(QtWidgets.QPushButton, 'ClearAlarmButton')
         self.NullFlowsensorButton = self.findChild(QtWidgets.QPushButton, 'NullFlowsensorButton')
         self.RebootModuleButton = self.findChild(QtWidgets.QPushButton, 'RebootModuleButton')
-        
-        self.ModeDropdown = self.findChild(QtWidgets.QComboBox, 'ModeDropDown')
-        self.StackedModes = self.findChild(QtWidgets.QStackedWidget, 'ModeSettings')
-        self.TabWidget = self.findChild(QtWidgets.QTabWidget, 'tabWidget')
-
         #Set up Buttons
         self.StopButton.hide()
         self.CancelButton.hide()
@@ -112,23 +120,24 @@ class Ui(QtWidgets.QWidget):
         #Define Button clicks    
         self.Start_Stop_Button.pressed.connect(self.start_Stop_Button_pressed)
         self.Start_Stop_Button.released.connect(self.start_Stop_Button_released)
-             
         self.StopButton.clicked.connect(self.stop)
         self.CancelButton.clicked.connect(self.cancel)
-        
         self.SetMedSettingsButton.clicked.connect(self.writeMedSettings)
         self.CancelMedSettingsButton.clicked.connect(self.clearMedChanges)
-        
         self.NullFlowsensorButton.clicked.connect(self.NullFlowSensor)
         self.RebootModuleButton.clicked.connect(self.rebootModule)
-        
         self.ClearAlarmButton.clicked.connect(self.ClearAlarms)
-        
-        self.ModeDropdown.currentIndexChanged.connect(self.changeStackedModes)
         #Buttons are disabled
         #self.ConnectButton.clicked.connect(self.Interface.connect)
         #self.DisconnectButton.clicked.connect(self.Interface.disconnect)
         
+        '''Define miscellaneous widgets'''
+        self.ModeDropdown = self.findChild(QtWidgets.QComboBox, 'ModeDropDown')
+        self.StackedModes = self.findChild(QtWidgets.QStackedWidget, 'ModeSettings')
+        self.TabWidget = self.findChild(QtWidgets.QTabWidget, 'tabWidget')
+        self.ModeDropdown.currentIndexChanged.connect(self.changeStackedModes)
+        self.AlarmTable = self.findChild(QtWidgets.QTableView, 'AlarmTable')
+
         '''Define slieders'''
         #Define sliders for pressure based control mode 
         self.SliderPressureInspExp = self.findChild(QtWidgets.QSlider, 'SliderPressureInspExp')
@@ -150,6 +159,7 @@ class Ui(QtWidgets.QWidget):
         self.checkBoxVolumeASBEnabled = self.findChild(QtWidgets.QCheckBox, 'checkBoxVolumeASBEnabled') 
         '''Define labels'''
         #Labels in Overview
+        self.LabelOverviewAlarm = self.findChild(QtWidgets.QLabel, 'LabelOverviewAlarm')
         self.LabelMode = self.findChild(QtWidgets.QLabel, 'LabelMode')
         self.LabelVolume = self.findChild(QtWidgets.QLabel, 'VTLabel')
         self.LabelAMV = self.findChild(QtWidgets.QLabel, 'AMVLabel')
@@ -177,7 +187,7 @@ class Ui(QtWidgets.QWidget):
         #self.LabelIpAddress = self.findChild(QtWidgets.QLabel, 'LabelIpAddress')
         self.LabelFrameRate = self.findChild(QtWidgets.QLabel, 'LabelFrameRate')
         self.LabelDataUpdateRate = self.findChild(QtWidgets.QLabel, 'DataUpdateRate')
-        #Setting up Graphs
+        '''Define graphs '''
         #Setting up VolumeGraph
         self.pen = pyqtgraph.mkPen(color=(0, 0, 0))
 
@@ -185,12 +195,14 @@ class Ui(QtWidgets.QWidget):
         self.VolumeGraph.setBackground(('#0069b4'))
         self.VolumeGraph.showGrid(x=True, y=True)
         self.VolumeGraphxaxis = self.VolumeGraph.getAxis('bottom')
-         
+        self.VolumeGraph.setMouseEnabled(x=False, y= False)
+
         #Setting up FlowGraph
         self.FlowGraph = self.findChild(pyqtgraph.PlotWidget, 'FlowGraph')
         self.FlowGraph.setBackground(('#0069b4'))
         self.FlowGraph.showGrid(x=True, y=True)
         self.FlowGraphxaxis = self.FlowGraph.getAxis('bottom')
+        self.FlowGraph.setMouseEnabled(x=False, y= False)
         
         #Setting up PressureGraph
         self.PressureGraph = self.findChild(pyqtgraph.PlotWidget, 'PressureGraph')
@@ -198,10 +210,7 @@ class Ui(QtWidgets.QWidget):
         self.PressureGraph.showGrid(x=True, y=True)
         self.PressureGraphxaxis = self.PressureGraph.getAxis('bottom')
         self.PressureGraph.setMouseEnabled(x=False, y= False)
-        '''Alarms'''
-        self.AlarmTable = self.findChild(QtWidgets.QTableView, 'AlarmTable')
-        self.Alarm = AlarmHandler()
-        '''Timers'''
+        '''Define timers'''
         #Timer for long button press
         self.timer_start_stop_button = QtCore.QTimer()
         self.timer_start_stop_button.setSingleShot(True)
@@ -209,17 +218,17 @@ class Ui(QtWidgets.QWidget):
         #Timer for refreshing GUI
         self.timer_gui = QtCore.QTimer()
         self.timer_gui.timeout.connect(self.update_gui)
-        self.timer_gui.start(self.updatetime)  # every 50 millisecon
+        self.timer_gui.start(updatetime)  # every 50 millisecon
         #Timer for getting Sensor Data
         self.timer_getdata = QtCore.QTimer()
         self.timer_getdata.timeout.connect(self.getValues)
-        self.timer_getdata.start(self.updatetime)
+        self.timer_getdata.start(updatetime)
         #Timer for trying reconnect
         self.timer_reconnect = QtCore.QTimer()
         self.timer_reconnect.timeout.connect(self.reconnect)
         self.timer_reconnect.start(1000) #Dont set to low.. otherwise the connection will fail
         
-        #Show Window, depending on Fullscreen setting. 
+        '''Show window'''
         self.setWindowTitle('TOSV UserInterface')
         if fullscreen:
             self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
@@ -230,12 +239,15 @@ class Ui(QtWidgets.QWidget):
         
         
         
-    #Updating the GUI periodically, called by timer. 
-    #ToDo: Cleanup 
+    '''Updating the GUI periodically and calling the self checks, called by timer'''
     def update_gui(self):
-        starttime = time.time()
+        starttime = time.time() #just for performance evaluation
+        '''Alarm table '''
+        model = self.Alarm.AlarmTable()
+        self.AlarmTable.setModel(model)
+        '''Run self checks'''
+        self.SelfCheck.runChecks(self.Data, self.Settings)
         
-        #self.AlarmTable.showGrid()
         if self.Interface.isConnected() == True:
             self.SetMedSettingsButton.setEnabled(True)
             self.CancelMedSettingsButton.setEnabled(True)
@@ -278,7 +290,7 @@ class Ui(QtWidgets.QWidget):
             self.LabelFrameRate.setText(str("{:.2f}".format(1/cycletime)))
         else: 
             self.LabelFrameRate.setText('>500')
-        
+    '''Updating the process data, called by timer'''
     def getValues(self):
         if self.Interface.isConnected() == True:
             starttime = time.time()
@@ -287,6 +299,7 @@ class Ui(QtWidgets.QWidget):
             self.actualVolume = self.Interface.getActualVolume()
             self.actualFlow = self.Interface.getActualFlow()
             self.currentState = self.Interface.getBoardParameter("TosvState")
+            self.actualRPM = self.Interface.getBoardParameter('ActualVelocity')
             
             if self.actualPressure:
                 self.actualPressure = self.actualPressure/1000
@@ -313,6 +326,14 @@ class Ui(QtWidgets.QWidget):
                     self.volumeData.pop(0)
                     self.volumeTimeData.pop(0)
                     
+            if self.actualRPM != None:
+                self.RPMData.append(self.actualRPM)
+                self.RPMTimeData.append(time.time())
+                
+                if len(self.RPMData) > self.maxDataPoints:
+                    self.RPMData.pop(0)
+                    self.RPMTimeData.pop(0)
+                    
             if self.currentState != None:
                 self.stateData.append(self.currentState)
                 self.stateTimeData.append(time.time())
@@ -321,14 +342,17 @@ class Ui(QtWidgets.QWidget):
                     self.stateData.pop(0)
                     self.stateTimeData.pop(0)
             
-                findmax = self.findMaxInCycle(self.volumeData, self.stateData)
+                findmax = self.findMaxInCycle(self.volumeData)
                 if findmax:
                     self.cycleMaxVolume=findmax
+                    self.Data[10] = self.cycleMaxVolume
                     self.actualAMV = self.cycleMaxVolume*self.Freq*60*1000
+                    
             cycletime = time.time()-starttime
             if cycletime != 0:
                 self.LabelDataUpdateRate.setText(str("{:.2f}".format(1/cycletime)))        
 
+    '''This function checks if sliders where changed for some visual feedback'''
     def checkSliderChanged(self):
         #ToDo. expand for Volume
         SliderchangedStyle = """.QSlider {} 
@@ -425,7 +449,7 @@ class Ui(QtWidgets.QWidget):
                 self.checkBoxVolumeASBEnabled.setStyleSheet(CheckBoxchangedStyle)
         
         
-    #Paint Trinamic logo   
+    '''Paint Logos '''
     def paintEvent(self, event):
         painter = QtGui.QPainter(self)
         windowWidth = self.width()
@@ -443,7 +467,7 @@ class Ui(QtWidgets.QWidget):
         painter.save()
 
     
-    
+    '''get board settings'''
     def getSettings(self):
         #Settings for Pressure Based Control 
         self.InspRiseTime  = self.Interface.getBoardParameter("TosvInhalationRiseTime")
@@ -457,8 +481,11 @@ class Ui(QtWidgets.QWidget):
         self.ASBThreshold = self.Interface.getBoardParameter('ASBThreshold')
         self.MaxPressure = self.Interface.getBoardParameter("MaxPressure")
         self.TargetVT= self.Interface.getBoardParameter("MaxVolume")
-    def updateGraph(self):
         
+        self.Settings = [self.running, self.RunningSince, self.InspRiseTime, self.InspHoldTime, self.ExpFallTime, self.ExpHoldTime, self.PressureLimit, self.PressurePeep, self.CurrentMode, self.ASBenable, self.ASBThreshold, self.MaxPressure, self.TargetVT]
+    
+    '''update graphs'''
+    def updateGraph(self):
         x_axis = numpy.subtract(self.pressureTimeData, time.time())
         y_axis = self.pressureData
         self.PressureGraph.plot(x_axis, y_axis, clear=True,fillLevel=0, pen=self.pen ,brush=(255,255,255,255))
@@ -470,7 +497,7 @@ class Ui(QtWidgets.QWidget):
         x_axis = numpy.subtract(self.volumeTimeData, time.time())
         y_axix = self.volumeData
         self.VolumeGraph.plot(x_axis, y_axix, clear=True,fillLevel=0, pen=self.pen ,brush=(255,255,255,255))
-
+    '''write the labels on the overview page '''
     def writeOverviewLabels(self):
         self.LabelVolume.setText(str(self.cycleMaxVolume)+"ml")
         self.LabelAMV.setText(str("{:.2f}".format(self.actualAMV/1000))+"l/min")
@@ -485,20 +512,33 @@ class Ui(QtWidgets.QWidget):
                 self.LabelMode.setText("V")
             else: 
                 self.LabelMode.setText("V+ASB")
-    #function called when start/stop button pressed. Starting program or counting down to confirm stop            
+        if self.Alarm.lastAlarm()[1] == False:
+            Topic = self.Alarm.lastAlarm()[2]
+            Text = self.Alarm.lastAlarm()[3]
+            text = f"{Topic}|{Text}"
+            self.LabelOverviewAlarm.setText(text)
+            self.LabelOverviewAlarm.setStyleSheet("color: red")
+
+        else: 
+            self.LabelOverviewAlarm.setText("No uncleared Alarms")
+            self.LabelOverviewAlarm.setStyleSheet("color: white")
+        
+    '''function called when start/stop button pressed. Starting program or counting down to confirm stop'''          
     def start_Stop_Button_pressed(self):
         print("running") 
         if self.Interface.isConnected() == True:
             if self.running == False:
-                print("startTest") 
                 self.Interface.startVentilation()
                 self.running = True
+                self.RunningSince = time.time()
+                self.Settings[0] = self.running
+                self.Settings[1] = self.RunningSince
             else:
                 print("start timer") 
                 self.timer_start_stop_button.start(1000)
                 print("started timer") 
         
-    #function called when start/stop button released. Stopping Timer for stop confrimation countdown             
+    '''function called when start/stop button released. Stopping Timer for stop confrimation countdown'''     
     def start_Stop_Button_released(self):
         if self.running == True:
             print("stop timer") 
@@ -506,29 +546,31 @@ class Ui(QtWidgets.QWidget):
         else:
             return
     
-    #show buttons to confirm stop
+    '''show buttons to confirm stop'''
     def confirm_stop(self):
         #insert change of buttons
         self.Start_Stop_Button.hide()
         self.StopButton.show()
         self.CancelButton.show()
 
-    #stop button pressed
+    '''stop button pressed'''
     def stop(self):
         self.running = False
         self.Interface.stopVentilation()
+        self.Settings[0] = self.running
+        self.Settings[1] = time.time()
         self.Start_Stop_Button.show()
         self.StopButton.hide()
         self.CancelButton.hide()
 
-    #cancel button pressed
+    '''cancel button pressed'''
     def cancel(self):
         self.Start_Stop_Button.show()
         self.StopButton.hide()
         self.CancelButton.hide()  
   
-    #reconnect when no connection 
-    #ToDo: try to detect lost connection
+    '''reconnect when no connection 
+    #ToDo: try to detect lost connection'''
     def reconnect(self):
         if self.Interface.isConnected() == False:
             self.Interface.connect()
@@ -558,9 +600,10 @@ class Ui(QtWidgets.QWidget):
             else:
                 self.showFullScreen()
 
-    '''Function writes the setted MedSetting values on button press to module   '''           
+    '''Function writes the setted MedSetting values on button press to module '''           
     def writeMedSettings(self):
         self.Interface.setBoardParameter("TosvMode",self.StackedModes.currentIndex())
+        self.RunningSince = time.time()
         #For pressure based settings
         if self.StackedModes.currentIndex() == 0:
             self.Freq = self.SliderPressureFreq.value()/(10*60*1000)
@@ -602,7 +645,7 @@ class Ui(QtWidgets.QWidget):
         self.LabelPLimit.setText(str(self.MaxPressure/1000)+"mbar")
         self.clearMedChanges()
 
-    #Function setts the slieders in MedSettings back to values set in module 
+    '''Function setts the slieders in MedSettings back to values set in module '''
     def clearMedChanges(self):
         self.getSettings()
         self.CalcPressSettings()
@@ -637,7 +680,8 @@ class Ui(QtWidgets.QWidget):
         self.LabelPLimit.setText(str(self.MaxPressure/1000)+"mbar")
 
         print("Loaded Settings from board")
-
+    
+    '''Write labels on med. settings page '''
     def writeMedSettingsLabels(self):
         #Pressure Settings
         if self.StackedModes.currentIndex() == 0:
@@ -659,19 +703,20 @@ class Ui(QtWidgets.QWidget):
             self.LabelSetVolumeVT.setText(str(self.SliderVolumeVT.value()))
             self.Labelfreq.setText(str("{:.2f}".format(self.SliderVolumeFreq.value()/10))+" /min")
             self.LabelSetVolumeASB.setText(str(self.SliderVolumeASBTrigger.value())+ "ml/min")
-
+    '''Called to nullr the flow sensor '''
     def NullFlowSensor(self):
         self.Interface.setBoardParameter('ReInitFlowSensor', 1)
         self.Interface.ZeroFlowSensor()
+        self.RunningSince = time.time()
         return
-    
+    '''Caluclations needed to transfer med. settings to process variables'''
     def CalcPressTimes(self):
         TInsp = (1/self.Freq)/(1+(1/self.InspExp))
         TExp  = (1/self.Freq)-TInsp
         if TInsp >= self.InspRiseTime:
             self.InspHoldTime = TInsp-self.InspRiseTime 
         else: 
-            self.Alarm.newAlarm('MedSettings', 'Pressure ramp longer than inspiration time')
+            self.Alarm.newAlarm('MedSettings', 'Ramp longer than insp. time. Settings auto adjusted')
             self.InspRiseTime = TInsp 
             self.InspHoldTime = 0
 
@@ -679,11 +724,12 @@ class Ui(QtWidgets.QWidget):
             self.ExpHoldTime = TExp-self.ExpFallTime 
         else: 
             #ToDo: Insert Error
-            self.Alarm.newAlarm('MedSettings', 'Expiration time to short')
+            self.Alarm.newAlarm('MedSettings', 'Expiration time to short. Settings auto adjusted')
             self.ExpHoldTime = 0
             self.Freq = 1/(TInsp+self.ExpFallTime) 
         self.CalcPressSettings()
-    
+        
+    '''Caluclations process variables to med. settings'''
     def CalcPressSettings(self):
         T = self.InspRiseTime+self.InspHoldTime+self.ExpFallTime+self.ExpHoldTime
         if T != 0:
@@ -694,16 +740,15 @@ class Ui(QtWidgets.QWidget):
         self.InspExp = (self.InspRiseTime+self.InspHoldTime)/(self.ExpFallTime+self.ExpHoldTime)
         
         
-    #Find Max in last cycle 
-    def findMaxInCycle(self, ydata, statedata):
-        if statedata[self.maxDataPoints-1] == 4:
+    '''Find Max in last cycle'''
+    def findMaxInCycle(self, ydata):
+        if self.stateData[len(self.stateData)-1] == 4:
             max = 0
             for x in range(self.maxDataPoints):
-                if statedata[self.maxDataPoints-1] == 5:
+                if self.stateData[len(self.stateData)-1-x] == 5:
                     break
-                else:
-                    if  ydata[(self.maxDataPoints-1)-x] > max:
-                        max = ydata[(self.maxDataPoints-1)-x]
+                if  ydata[(len(self.stateData)-1)-x] > max:
+                        max = ydata[(len(self.stateData)-1)-x]
             return max
         return 
     
@@ -712,16 +757,17 @@ class Ui(QtWidgets.QWidget):
         return 
     
     def ClearAlarms(self):
+        self.RunningSince = time.time()
         self.Alarm.clearAll()
         return
-     
+    '''show ip in tec. settings tab for easy access '''
     def showIpInTecConfig(self):
         try:
             ip = ((([ip for ip in socket.gethostbyname_ex(socket.gethostname())[2] if not ip.startswith("127.")] or [[(s.connect(("8.8.8.8", 53)), s.getsockname()[0], s.close()) for s in [socket.socket(socket.AF_INET, socket.SOCK_DGRAM)]][0][1]]) + ["no IP found"])[0])
             self.LabelIpAddress.setText(str(ip))
         except:
             self.LabelIpAddress.setText('No Network')
-              
+    '''reboot module to fix issues with i2c sensors '''         
     def rebootModule(self):
         self.Interface.reboot()
         for x in range(self.maxDataPoints):
@@ -736,7 +782,7 @@ class Ui(QtWidgets.QWidget):
             self.stateTimeData[x] = initTime
         time.sleep(0.3)
         self.NullFlowSensor()
-        
+'''Main class '''       
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     #app.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)

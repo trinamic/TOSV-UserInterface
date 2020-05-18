@@ -20,7 +20,7 @@ class TMC4671_TMC6100_TOSV_REF(object):
     " axis parameter access "
     def axisParameter(self, apType):
         return self.connection.axisParameter(apType, self.motor)
-
+    
     def setAxisParameter(self, apType, value):
         self.connection.setAxisParameter(apType, self.motor, value)
 
