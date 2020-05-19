@@ -23,7 +23,7 @@ allowedVTError = 5#% from setVT
 allowedRPMPressureLag = 10
 allowedRPMPressureCorr = 0.9
 allowedVTError = 10#% from setV
-allowedStaticFlowMean = 15
+allowedStaticFlowMean = 20 #ml/min
 
 class SelfCheck:
     def __init__(self, Alarm):

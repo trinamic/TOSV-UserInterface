@@ -201,7 +201,7 @@ border: 1px solid black;}
           </widget>
          </item>
          <item>
-          <widget class="PlotWidget" name="VolumeGraph" native="true">
+          <widget class="PlotWidget" name="GraphVolume" native="true">
            <property name="font">
             <font>
              <family>Open Sans</family>
@@ -229,7 +229,7 @@ border: 1px solid black;}
           </widget>
          </item>
          <item>
-          <widget class="PlotWidget" name="FlowGraph" native="true">
+          <widget class="PlotWidget" name="GraphFlow" native="true">
            <property name="font">
             <font>
              <family>Open Sans</family>
@@ -258,7 +258,7 @@ border: 1px solid black;}
           </widget>
          </item>
          <item>
-          <widget class="PlotWidget" name="PressureGraph" native="true">
+          <widget class="PlotWidget" name="GraphPressure" native="true">
            <widget class="QLabel" name="lblPressure">
             <property name="geometry">
              <rect>
@@ -303,7 +303,7 @@ border: 1px solid black;}
           <number>9</number>
          </property>
          <item>
-          <widget class="QLabel" name="LabelMode">
+          <widget class="QLabel" name="LabelOverviewMode">
            <property name="text">
             <string>Mode</string>
            </property>
@@ -317,7 +317,7 @@ border: 1px solid black;}
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="VTLabel">
+          <widget class="QLabel" name="LabelOverviewCurrentVT">
            <property name="font">
             <font>
              <family>Open Sans</family>
@@ -345,7 +345,7 @@ border: 1px solid black;}
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="AMVLabel">
+          <widget class="QLabel" name="LabelOverviewCurrentAMV">
            <property name="font">
             <font>
              <family>Open Sans</family>
@@ -370,7 +370,7 @@ border: 1px solid black;}
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="PMaxLabel">
+          <widget class="QLabel" name="LabelOverviewCurrentPMax">
            <property name="font">
             <font>
              <family>Open Sans</family>
@@ -391,14 +391,14 @@ border: 1px solid black;}
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="label_11">
+          <widget class="QLabel" name="LabelOverviewPressure">
            <property name="text">
             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;right&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;P&lt;/span&gt;&lt;span style=&quot; font-size:12pt; vertical-align:sub;&quot;&gt;Limit &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="PLimLabel">
+          <widget class="QLabel" name="LabelOverviewPLimit">
            <property name="font">
             <font>
              <family>Open Sans</family>
@@ -423,7 +423,7 @@ border: 1px solid black;}
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="PeepLabel">
+          <widget class="QLabel" name="LabelOverviewPeep">
            <property name="font">
             <font>
              <family>Open Sans</family>
@@ -451,7 +451,7 @@ border: 1px solid black;}
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="fLabel">
+          <widget class="QLabel" name="LabelOverviewFreq">
            <property name="font">
             <font>
              <family>Open Sans</family>
@@ -501,7 +501,7 @@ border: 1px solid black;}*/
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_10">
        <item>
-        <widget class="QComboBox" name="ModeDropDown">
+        <widget class="QComboBox" name="DropDownMode">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -526,7 +526,7 @@ border: 1px solid black;}*/
         </widget>
        </item>
        <item>
-        <widget class="QStackedWidget" name="ModeSettings">
+        <widget class="QStackedWidget" name="StackedModes">
          <property name="currentIndex">
           <number>0</number>
          </property>
@@ -597,7 +597,7 @@ border: 1px solid black;}*/
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="SetPressureInspExp">
+              <widget class="QLabel" name="LabelSetPressureInspExp">
                <property name="font">
                 <font>
                  <family>Open Sans</family>
@@ -682,7 +682,7 @@ border: 1px solid black;}*/
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="SetPressureFreq">
+              <widget class="QLabel" name="LabelSetPressureFreq">
                <property name="font">
                 <font>
                  <family>Open Sans</family>
@@ -767,7 +767,7 @@ border: 1px solid black;}*/
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="SetPressureRiseTime">
+              <widget class="QLabel" name="LabelSetPressureRiseTime">
                <property name="font">
                 <font>
                  <family>Open Sans</family>
@@ -862,7 +862,7 @@ border: 1px solid black;}*/
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="SetPressurePeepLabel">
+              <widget class="QLabel" name="LabelSetPressurePeepLabel">
                <property name="font">
                 <font>
                  <family>Open Sans</family>
@@ -944,7 +944,7 @@ border: 1px solid black;}*/
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="SetPressurePLimitLabel">
+              <widget class="QLabel" name="LabelSetPressurePLimitLabel">
                <property name="font">
                 <font>
                  <family>Open Sans</family>
@@ -1026,7 +1026,7 @@ border: 1px solid black;}*/
               </widget>
              </item>
              <item>
-              <widget class="QCheckBox" name="checkBoxPressureASBEnabled">
+              <widget class="QCheckBox" name="CheckBoxPressureASBEnabled">
                <property name="minimumSize">
                 <size>
                  <width>0</width>
@@ -1137,7 +1137,7 @@ border: 1px solid black;}*/
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="SetVolumeInspExp">
+              <widget class="QLabel" name="LabelSetVolumeInspExp">
                <property name="font">
                 <font>
                  <family>Open Sans</family>
@@ -1222,7 +1222,7 @@ border: 1px solid black;}*/
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="SetVolumeFreq">
+              <widget class="QLabel" name="LabelSetVolumeFreq">
                <property name="font">
                 <font>
                  <family>Open Sans</family>
@@ -1307,7 +1307,7 @@ border: 1px solid black;}*/
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="SetVolumeVT">
+              <widget class="QLabel" name="LabelSetVolumeVT">
                <property name="font">
                 <font>
                  <family>Open Sans</family>
@@ -1392,7 +1392,7 @@ border: 1px solid black;}*/
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="SetVolumeRiseTime">
+              <widget class="QLabel" name="LabelSetVolumeRiseTime">
                <property name="font">
                 <font>
                  <family>Open Sans</family>
@@ -1487,7 +1487,7 @@ border: 1px solid black;}*/
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="SetVolumePeepLabel">
+              <widget class="QLabel" name="LabelSetVolumePeepLabel">
                <property name="font">
                 <font>
                  <family>Open Sans</family>
@@ -1569,7 +1569,7 @@ border: 1px solid black;}*/
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="SetVolumePLimitLabel">
+              <widget class="QLabel" name="LabelSetVolumePLimitLabel">
                <property name="font">
                 <font>
                  <family>Open Sans</family>
@@ -1651,7 +1651,7 @@ border: 1px solid black;}*/
               </widget>
              </item>
              <item>
-              <widget class="QCheckBox" name="checkBoxVolumeASBEnabled">
+              <widget class="QCheckBox" name="CheckBoxVolumeASBEnabled">
                <property name="minimumSize">
                 <size>
                  <width>0</width>
@@ -1902,7 +1902,7 @@ color: white;</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_5">
        <item>
-        <widget class="QTableView" name="AlarmTable">
+        <widget class="QTableView" name="TableAlarm">
          <property name="styleSheet">
           <string notr="true">QTableView{
 background-color:#0069B4;
@@ -2136,7 +2136,7 @@ color: white;</string>
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="DataUpdateRate">
+          <widget class="QLabel" name="LabelDataUpdateRate">
            <property name="text">
             <string>Data Time</string>
            </property>

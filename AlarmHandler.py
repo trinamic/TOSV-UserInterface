@@ -9,8 +9,9 @@ A basic handler for alarms is implemented.
 '''
 import time
 from time import strftime
-from PyQt5 import QtCore
+from PyQt5 import QtCore, QtGui
 import pandas
+from PyQt5.Qt import QColor
 
 maxAlarms = 10
 
@@ -59,7 +60,11 @@ class TableModel(QtCore.QAbstractTableModel):
         if role == QtCore.Qt.DisplayRole:
             value = self._data.iloc[index.row(), index.column()]
             return str(value)
-
+        elif role == QtCore.Qt.BackgroundRole:
+                state = self._data.iloc[index.row(), 1]
+                if state == False:
+                    color = QColor('#f7751f')
+                    return color
     def rowCount(self, index):
         return self._data.shape[0]
 
@@ -73,4 +78,6 @@ class TableModel(QtCore.QAbstractTableModel):
 
             if orientation == QtCore.Qt.Vertical:
                 return str(self._data.index[section])
+    
+
     

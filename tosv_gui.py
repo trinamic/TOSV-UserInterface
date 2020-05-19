@@ -91,8 +91,8 @@ class Ui(QtWidgets.QWidget):
         self.ExpHoldTime = 0
         self.InspExp = 1
         self.Freq = 0
+        self.PressureInsp = 0
         self.PressureLimit = 0
-        self.MaxPressure = 0
         self.PressurePeep = 0
         self.ASBenable = 0
         self.ASBThreshold = 0
@@ -132,12 +132,12 @@ class Ui(QtWidgets.QWidget):
         #self.DisconnectButton.clicked.connect(self.Interface.disconnect)
         
         '''Define miscellaneous widgets'''
-        self.ModeDropdown = self.findChild(QtWidgets.QComboBox, 'ModeDropDown')
-        self.StackedModes = self.findChild(QtWidgets.QStackedWidget, 'ModeSettings')
+        self.ModeDropdown = self.findChild(QtWidgets.QComboBox, 'DropDownMode')
+        self.StackedModes = self.findChild(QtWidgets.QStackedWidget, 'StackedModes')
         self.TabWidget = self.findChild(QtWidgets.QTabWidget, 'tabWidget')
         self.ModeDropdown.currentIndexChanged.connect(self.changeStackedModes)
-        self.AlarmTable = self.findChild(QtWidgets.QTableView, 'AlarmTable')
-
+        self.AlarmTable = self.findChild(QtWidgets.QTableView, 'TableAlarm')
+        
         '''Define slieders'''
         #Define sliders for pressure based control mode 
         self.SliderPressureInspExp = self.findChild(QtWidgets.QSlider, 'SliderPressureInspExp')
@@ -155,57 +155,59 @@ class Ui(QtWidgets.QWidget):
         self.SliderVolumeVT = self.findChild(QtWidgets.QSlider, 'SliderVolumeVT')
         self.SliderVolumeASBTrigger = self.findChild(QtWidgets.QSlider, 'SliderVolumeASBTrigger')
         '''Define checkBoxes'''
-        self.checkBoxPressureASBEnabled = self.findChild(QtWidgets.QCheckBox, 'checkBoxPressureASBEnabled')
-        self.checkBoxVolumeASBEnabled = self.findChild(QtWidgets.QCheckBox, 'checkBoxVolumeASBEnabled') 
+        self.checkBoxPressureASBEnabled = self.findChild(QtWidgets.QCheckBox, 'CheckBoxPressureASBEnabled')
+        self.checkBoxVolumeASBEnabled = self.findChild(QtWidgets.QCheckBox, 'CheckBoxVolumeASBEnabled') 
         '''Define labels'''
         #Labels in Overview
         self.LabelOverviewAlarm = self.findChild(QtWidgets.QLabel, 'LabelOverviewAlarm')
-        self.LabelMode = self.findChild(QtWidgets.QLabel, 'LabelMode')
-        self.LabelVolume = self.findChild(QtWidgets.QLabel, 'VTLabel')
-        self.LabelAMV = self.findChild(QtWidgets.QLabel, 'AMVLabel')
-        self.LabelPMax = self.findChild(QtWidgets.QLabel, 'PMaxLabel')
-        self.LabelPLimit = self.findChild(QtWidgets.QLabel, 'PLimLabel')
-        self.LabelPEEP = self.findChild(QtWidgets.QLabel, 'PeepLabel')
-        self.Labelfreq = self.findChild(QtWidgets.QLabel, 'fLabel')
+        self.LabelOverviewMode = self.findChild(QtWidgets.QLabel, 'LabelOverviewMode')
+        self.LabelOverviewCurrentVT = self.findChild(QtWidgets.QLabel, 'LabelOverviewCurrentVT')
+        self.LabelOverviewCurrentAMV = self.findChild(QtWidgets.QLabel, 'LabelOverviewCurrentAMV')
+        self.LabelOverviewCurrentPMax = self.findChild(QtWidgets.QLabel, 'LabelOverviewCurrentPMax')
+        self.LabelOverviewPLimit = self.findChild(QtWidgets.QLabel, 'LabelOverviewPLimit')
+        self.LabelOverviewPeep = self.findChild(QtWidgets.QLabel, 'LabelOverviewPeep')
+        self.LabelOverviewFreq = self.findChild(QtWidgets.QLabel, 'LabelOverviewFreq')
+        
+        self.LabelOverviewPressure = self.findChild(QtWidgets.QLabel, 'LabelOverviewPressure')
         
         #Labels in MedSettings for pressure based control
-        self.LabelSetPressureInspExp = self.findChild(QtWidgets.QLabel, 'SetPressureInspExp')
-        self.LabelSetPressureFreq = self.findChild(QtWidgets.QLabel, 'SetPressureFreq')
-        self.LabelSetPressureRiseTime = self.findChild(QtWidgets.QLabel, 'SetPressureRiseTime')
-        self.LabelSetPressurePEEP = self.findChild(QtWidgets.QLabel, 'SetPressurePeepLabel')
-        self.LabelSetPressurePLimit = self.findChild(QtWidgets.QLabel, 'SetPressurePLimitLabel')
+        self.LabelSetPressureInspExp = self.findChild(QtWidgets.QLabel, 'LabelSetPressureInspExp')
+        self.LabelSetPressureFreq = self.findChild(QtWidgets.QLabel, 'LabelSetPressureFreq')
+        self.LabelSetPressureRiseTime = self.findChild(QtWidgets.QLabel, 'LabelSetPressureRiseTime')
+        self.LabelSetPressurePEEP = self.findChild(QtWidgets.QLabel, 'LabelSetPressurePeepLabel')
+        self.LabelSetPressurePLimit = self.findChild(QtWidgets.QLabel, 'LabelSetPressurePLimitLabel')
         self.LabelSetPressureASB = self.findChild(QtWidgets.QLabel, 'LabelSetPressureASB')
         #Labels in MedSettings for volume based control
-        self.LabelSetVolumeInspExp = self.findChild(QtWidgets.QLabel, 'SetVolumeInspExp')
-        self.LabelSetVolumeFreq = self.findChild(QtWidgets.QLabel, 'SetVolumeFreq')
-        self.LabelSetVolumeRiseTime = self.findChild(QtWidgets.QLabel, 'SetVolumeRiseTime')
-        self.LabelSetVolumeVT = self.findChild(QtWidgets.QLabel, 'SetVolumeVT')
-        self.LabelSetVolumePEEP = self.findChild(QtWidgets.QLabel, 'SetVolumePeepLabel')
-        self.LabelSetVolumePLimit = self.findChild(QtWidgets.QLabel, 'SetVolumePLimitLabel')
+        self.LabelSetVolumeInspExp = self.findChild(QtWidgets.QLabel, 'LabelSetVolumeInspExp')
+        self.LabelSetVolumeFreq = self.findChild(QtWidgets.QLabel, 'LabelSetVolumeFreq')
+        self.LabelSetVolumeRiseTime = self.findChild(QtWidgets.QLabel, 'LabelSetVolumeRiseTime')
+        self.LabelSetVolumeVT = self.findChild(QtWidgets.QLabel, 'LabelSetVolumeVT')
+        self.LabelSetVolumePEEP = self.findChild(QtWidgets.QLabel, 'LabelSetVolumePeepLabel')
+        self.LabelSetVolumePLimit = self.findChild(QtWidgets.QLabel, 'LabelSetVolumePLimitLabel')
         self.LabelSetVolumeASB = self.findChild(QtWidgets.QLabel, 'LabelSetVolumeASB')
 
         #self.LabelIpAddress = self.findChild(QtWidgets.QLabel, 'LabelIpAddress')
         self.LabelFrameRate = self.findChild(QtWidgets.QLabel, 'LabelFrameRate')
-        self.LabelDataUpdateRate = self.findChild(QtWidgets.QLabel, 'DataUpdateRate')
+        self.LabelDataUpdateRate = self.findChild(QtWidgets.QLabel, 'LabelDataUpdateRate')
         '''Define graphs '''
         #Setting up VolumeGraph
         self.pen = pyqtgraph.mkPen(color=(0, 0, 0))
 
-        self.VolumeGraph = self.findChild(pyqtgraph.PlotWidget,'VolumeGraph')
+        self.VolumeGraph = self.findChild(pyqtgraph.PlotWidget,'GraphVolume')
         self.VolumeGraph.setBackground(('#0069b4'))
         self.VolumeGraph.showGrid(x=True, y=True)
         self.VolumeGraphxaxis = self.VolumeGraph.getAxis('bottom')
         self.VolumeGraph.setMouseEnabled(x=False, y= False)
 
         #Setting up FlowGraph
-        self.FlowGraph = self.findChild(pyqtgraph.PlotWidget, 'FlowGraph')
+        self.FlowGraph = self.findChild(pyqtgraph.PlotWidget, 'GraphFlow')
         self.FlowGraph.setBackground(('#0069b4'))
         self.FlowGraph.showGrid(x=True, y=True)
         self.FlowGraphxaxis = self.FlowGraph.getAxis('bottom')
         self.FlowGraph.setMouseEnabled(x=False, y= False)
         
         #Setting up PressureGraph
-        self.PressureGraph = self.findChild(pyqtgraph.PlotWidget, 'PressureGraph')
+        self.PressureGraph = self.findChild(pyqtgraph.PlotWidget, 'GraphPressure')
         self.PressureGraph.setBackground(('#0069b4'))
         self.PressureGraph.showGrid(x=True, y=True)
         self.PressureGraphxaxis = self.PressureGraph.getAxis('bottom')
@@ -264,7 +266,7 @@ class Ui(QtWidgets.QWidget):
             if self.TabWidget.currentIndex() == 2:
                 model = self.Alarm.AlarmTable()
                 self.AlarmTable.setModel(model)
-                            
+                self.AlarmTable.setColumnHidden(1,True)
             if self.running == True:
                 if self.timer_start_stop_button.isActive() == True:
                     self.Start_Stop_Button.setText(str(self.timer_start_stop_button.remainingTime()))
@@ -385,7 +387,7 @@ class Ui(QtWidgets.QWidget):
         else:
             self.SliderPressurePeep.setStyleSheet(SliderunchangedStyle)
         
-        if self.SliderPressurePInsp.value() != self.PressureLimit:
+        if self.SliderPressurePInsp.value() != self.PressureInsp:
             self.SliderPressurePInsp.setStyleSheet(SliderchangedStyle)
         else:
             self.SliderPressurePInsp.setStyleSheet(SliderunchangedStyle)
@@ -427,7 +429,7 @@ class Ui(QtWidgets.QWidget):
         else:
             self.SliderVolumePeep.setStyleSheet(SliderunchangedStyle)
         
-        if self.SliderVolumePMax.value() != self.MaxPressure:
+        if self.SliderVolumePMax.value() != self.PressureLimit:
             self.SliderVolumePMax.setStyleSheet(SliderchangedStyle)
         else:
             self.SliderVolumePMax.setStyleSheet(SliderunchangedStyle)
@@ -474,15 +476,15 @@ class Ui(QtWidgets.QWidget):
         self.InspHoldTime = self.Interface.getBoardParameter("TosvInhalationPauseTime")
         self.ExpFallTime = self.Interface.getBoardParameter("TosvExhalationFallTime")
         self.ExpHoldTime = self.Interface.getBoardParameter("TosvExhalationPauseTime")
-        self.PressureLimit = self.Interface.getBoardParameter("TosvLimitPressure")
+        self.PressureInsp = self.Interface.getBoardParameter("TosvLimitPressure")
         self.PressurePeep = self.Interface.getBoardParameter("TosvPeepPressure")
         self.CurrentMode  = self.Interface.getBoardParameter("TosvMode")
         self.ASBenable = self.Interface.getBoardParameter('ASBenable')
         self.ASBThreshold = self.Interface.getBoardParameter('ASBThreshold')
-        self.MaxPressure = self.Interface.getBoardParameter("MaxPressure")
+        self.PressureLimit = self.Interface.getBoardParameter("MaxPressure")
         self.TargetVT= self.Interface.getBoardParameter("MaxVolume")
         
-        self.Settings = [self.running, self.RunningSince, self.InspRiseTime, self.InspHoldTime, self.ExpFallTime, self.ExpHoldTime, self.PressureLimit, self.PressurePeep, self.CurrentMode, self.ASBenable, self.ASBThreshold, self.MaxPressure, self.TargetVT]
+        self.Settings = [self.running, self.RunningSince, self.InspRiseTime, self.InspHoldTime, self.ExpFallTime, self.ExpHoldTime, self.PressureInsp, self.PressurePeep, self.CurrentMode, self.ASBenable, self.ASBThreshold, self.PressureLimit, self.TargetVT]
     
     '''update graphs'''
     def updateGraph(self):
@@ -499,19 +501,19 @@ class Ui(QtWidgets.QWidget):
         self.VolumeGraph.plot(x_axis, y_axix, clear=True,fillLevel=0, pen=self.pen ,brush=(255,255,255,255))
     '''write the labels on the overview page '''
     def writeOverviewLabels(self):
-        self.LabelVolume.setText(str(self.cycleMaxVolume)+"ml")
-        self.LabelAMV.setText(str("{:.2f}".format(self.actualAMV/1000))+"l/min")
-        self.LabelPMax.setText(str(max(self.pressureData))+"mbar")
+        self.LabelOverviewCurrentVT.setText(str(self.cycleMaxVolume)+"ml")
+        self.LabelOverviewCurrentAMV.setText(str("{:.2f}".format(self.actualAMV/1000))+"l/min")
+        self.LabelOverviewCurrentPMax.setText(str(max(self.pressureData))+"mbar")
         if self.CurrentMode == 0:
             if self.ASBenable == 0:
-                self.LabelMode.setText("P")
+                self.LabelOverviewMode.setText("P")
             else: 
-                self.LabelMode.setText("P+ASB")
+                self.LabelOverviewMode.setText("P+ASB")
         else: 
             if self.ASBenable == 0:
-                self.LabelMode.setText("V")
+                self.LabelOverviewMode.setText("V")
             else: 
-                self.LabelMode.setText("V+ASB")
+                self.LabelOverviewMode.setText("V+ASB")
         if self.Alarm.lastAlarm()[1] == False:
             Topic = self.Alarm.lastAlarm()[2]
             Text = self.Alarm.lastAlarm()[3]
@@ -609,8 +611,8 @@ class Ui(QtWidgets.QWidget):
             self.Freq = self.SliderPressureFreq.value()/(10*60*1000)
             self.InspExp =  self.SliderPressureInspExp.value()/50
             self.InspRiseTime = self.SliderPressureRiseTime.value()
-            self.PressureLimit = self.SliderPressurePInsp.value()
-            self.Interface.setBoardParameter("TosvLimitPressure", int(self.PressureLimit))
+            self.PressureInsp = self.SliderPressurePInsp.value()
+            self.Interface.setBoardParameter("TosvLimitPressure", int(self.PressureInsp))
 
             self.PressurePeep = self.SliderPressurePeep.value()
             self.Interface.setBoardParameter("ASBThreshold", self.SliderPressureASBTrigger.value())
@@ -623,7 +625,7 @@ class Ui(QtWidgets.QWidget):
             self.Freq = self.SliderVolumeFreq.value()/(10*60*1000)
             self.InspExp =  self.SliderVolumeInspExp.value()/50
             self.InspRiseTime = self.SliderVolumeRiseTime.value()
-            self.MaxPressure = self.SliderVolumePLimit.value()
+            self.PressureLimit = self.SliderVolumePLimit.value()
             self.PressurePeep = self.SliderVolumePeep.value()
             self.Interface.setBoardParameter("MaxVolume",self.SliderVolumeVT.value())
             self.Interface.setBoardParameter("ASBThreshold", self.SliderVolumeASBTrigger.value())
@@ -631,7 +633,7 @@ class Ui(QtWidgets.QWidget):
                 self.Interface.setBoardParameter("ASBenable", 1)
             else: 
                 self.Interface.setBoardParameter("ASBenable", 0)
-            self.Interface.setBoardParameter("MaxPressure", int(self.MaxPressure))
+            self.Interface.setBoardParameter("MaxPressure", int(self.PressureLimit))
 
             
         self.CalcPressTimes()
@@ -641,8 +643,8 @@ class Ui(QtWidgets.QWidget):
         self.Interface.setBoardParameter("TosvExhalationPauseTime",int(self.ExpHoldTime))
         self.Interface.setBoardParameter("TosvPeepPressure",int(self.PressurePeep))
         #Values on Overviewpage
-        self.LabelPEEP.setText(str(self.PressurePeep/1000)+"mbar")
-        self.LabelPLimit.setText(str(self.MaxPressure/1000)+"mbar")
+        self.LabelOverviewPeep.setText(str(self.PressurePeep/1000)+"mbar")
+        self.LabelOverviewPLimit.setText(str(self.PressureLimit/1000)+"mbar")
         self.clearMedChanges()
 
     '''Function setts the slieders in MedSettings back to values set in module '''
@@ -655,7 +657,7 @@ class Ui(QtWidgets.QWidget):
         self.SliderPressureInspExp.setValue(self.InspExp*50)
         self.SliderPressureFreq.setValue(self.Freq*1000*10*60)
         self.SliderPressureRiseTime.setValue(self.InspRiseTime)
-        self.SliderPressurePInsp.setValue(self.PressureLimit)
+        self.SliderPressurePInsp.setValue(self.PressureInsp)
         self.SliderPressurePeep.setValue(self.PressurePeep)
         self.SliderPressureASBTrigger.setValue(self.ASBThreshold)
         
@@ -663,7 +665,7 @@ class Ui(QtWidgets.QWidget):
         self.SliderVolumeInspExp.setValue(self.InspExp*50)
         self.SliderVolumeFreq.setValue(self.Freq*1000*10*60)
         self.SliderVolumeRiseTime.setValue(self.InspRiseTime)
-        self.SliderVolumePMax.setValue(self.MaxPressure)
+        self.SliderVolumePMax.setValue(self.PressureLimit)
         self.SliderVolumePeep.setValue(self.PressurePeep)
         self.SliderVolumeVT.setValue(self.TargetVT)
         self.SliderVolumeASBTrigger.setValue(self.ASBThreshold)
@@ -676,9 +678,11 @@ class Ui(QtWidgets.QWidget):
             self.checkBoxVolumeASBEnabled.setChecked(False)
         
         #Set Labels  on overview page
-        self.LabelPEEP.setText(str(self.PressurePeep/1000)+"mbar")
-        self.LabelPLimit.setText(str(self.MaxPressure/1000)+"mbar")
-
+        self.LabelOverviewPLimit.setText(str(self.PressureLimit/1000)+"mbar")
+        if self.CurrentMode == 0:
+            self.LabelOverviewPressure.setText('<html><head/><body><p align="right"><span style=" font-size:12pt;">P</span><span style=" font-size:12pt; vertical-align:sub;">Insp </span></p></body></html>')
+        elif self.CurrentMode == 1:
+            self.LabelOverviewPressure.setText('<html><head/><body><p align="right"><span style=" font-size:12pt;">P</span><span style=" font-size:12pt; vertical-align:sub;">limit </span></p></body></html>')
         print("Loaded Settings from board")
     
     '''Write labels on med. settings page '''
@@ -690,7 +694,7 @@ class Ui(QtWidgets.QWidget):
             self.LabelSetPressureRiseTime.setText(str(self.SliderPressureRiseTime.value()/1000)+"s")
             self.LabelSetPressurePEEP.setText(str(self.SliderPressurePeep.value()/1000)+"mbar")
             self.LabelSetPressurePLimit.setText(str(self.SliderPressurePInsp.value()/1000)+"mbar")
-            self.Labelfreq.setText(str("{:.2f}".format(self.SliderPressureFreq.value()/10))+" /min")
+            self.LabelOverviewFreq.setText(str("{:.2f}".format(self.SliderPressureFreq.value()/10))+" /min")
             self.LabelSetPressureASB.setText(str(self.SliderPressureASBTrigger.value())+ "ml/min")
 
         #Volume Settings
@@ -701,7 +705,7 @@ class Ui(QtWidgets.QWidget):
             self.LabelSetVolumePEEP.setText(str(self.SliderVolumePeep.value()/1000)+"mbar")
             self.LabelSetVolumePLimit.setText(str(self.SliderVolumePLimit.value()/1000)+"mbar")
             self.LabelSetVolumeVT.setText(str(self.SliderVolumeVT.value()))
-            self.Labelfreq.setText(str("{:.2f}".format(self.SliderVolumeFreq.value()/10))+" /min")
+            self.LabelOverviewFreq.setText(str("{:.2f}".format(self.SliderVolumeFreq.value()/10))+" /min")
             self.LabelSetVolumeASB.setText(str(self.SliderVolumeASBTrigger.value())+ "ml/min")
     '''Called to nullr the flow sensor '''
     def NullFlowSensor(self):

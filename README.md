@@ -10,6 +10,7 @@ To run the code you have to install the following libraries:
 - PyTrinamic 
 - PyQt5
 - pyqtgraph
+- pandas
 
 Important note: 
 The pyqtgraph library currently distributed via pip is not

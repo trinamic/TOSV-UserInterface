@@ -135,7 +135,7 @@ class _APs():
     TargetPressure              = 31
     RampPressure                = 32
     ActualPressure              = 33
-    MaxPressure                 = 34
+    MaxPressure                 = 34 #Used to set the maximum Pressure. Used in volume mode as limit. 
     TorqueP                     = 35
     TorqueI                     = 36
     VelocityP                   = 37
@@ -171,7 +171,7 @@ class _APs():
     TosvInhalationPauseTime     = 105
     TosvExhalationFallTime      = 106
     TosvExhalationPauseTime     = 107
-    TosvLimitPressure           = 108
+    TosvLimitPressure           = 108 #Pressure Limit for Pressure Mode. Used as TInsp
     TosvPeepPressure            = 109
     ActualFlow                  = 110
     ZeroFlowSensor              = 111
